@@ -4,64 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/admin/dashboard.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">📚 Admin Perpustakaan</div>
-        <ul class="navbar-nav">
-            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    
-    <div class="main-content">
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/admin/dashboard" class="active">📊 Dashboard</a></li>
-                <li><a href="/admin/users">👥 Manajemen User</a></li>
-                <li><a href="/admin/katalog">📖 Katalog Buku</a></li>
-                <li><a href="/admin/kategori">🏷️ Kategori</a></li>
-                <li><a href="/admin/rak">📚 Rak Buku</a></li>
-            </ul>
-        </aside>
-        
-        <main class="content-area">
-            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Dashboard Overview</h1>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>{{ stats.total_users }}</h3>
-                    <p>Total User Aktif</p>
-                </div>
-                <div class="stat-card">
-                    <h3>{{ stats.total_buku }}</h3>
-                    <p>Total Judul Buku</p>
-                </div>
-                <div class="stat-card">
-                    <h3>{{ stats.sedang_dipinjam }}</h3>
-                    <p>Sedang Dipinjam</p>
-                </div>
-                <div class="stat-card">
-                    <h3>{{ stats.denda_belum_lunas }}</h3>
-                    <p>Denda Belum Lunas</p>
-                </div>
+            <div class="sidebar-header">
+                <h1 class="logo">PERPUSTAKAAN</h1>
+                <p class="subtitle">Admin Portal</p>
             </div>
             
-            <div class="card">
-                <div class="card-header">Selamat Datang di Panel Admin</div>
-                <p>Gunakan menu di samping untuk mengelola sistem perpustakaan. Anda memiliki akses penuh untuk:</p>
-                <ul style="margin-top: 15px; padding-left: 20px;">
-                    <li>Mengelola data user (mahasiswa, dosen, petugas)</li>
-                    <li>Mengelola katalog buku</li>
-                    <li>Mengelola kategori dan rak buku</li>
-                    <li>Memantau aktivitas peminjaman</li>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <a href="/admin/dashboard" class="nav-link">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link">
+                            <span class="nav-text">Manajemen User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/katalog" class="nav-link">
+                            <span class="nav-text">Katalog Buku</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/kategori" class="nav-link">
+                            <span class="nav-text">Kategori</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/rak" class="nav-link">
+                            <span class="nav-text">Rak Buku</span>
+                        </a>
+                    </li>
                 </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ session.get('nama_lengkap', 'A')[0].upper() }}</div>
+                    <div class="user-details">
+                        <p class="user-name">{{ session.get('nama_lengkap') }}</p>
+                        <p class="user-role">Administrator</p>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Dashboard Overview</h2>
+                    <p>Pantau aktivitas dan statistik perpustakaan</p>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">{{ stats.total_users }}</h3>
+                            <p class="stat-label">Total User Aktif</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">{{ stats.total_buku }}</h3>
+                            <p class="stat-label">Total Judul Buku</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">{{ stats.sedang_dipinjam }}</h3>
+                            <p class="stat-label">Sedang Dipinjam</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">{{ stats.denda_belum_lunas }}</h3>
+                            <p class="stat-label">Denda Belum Lunas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Welcome Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Selamat Datang di Panel Admin</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Gunakan menu di samping untuk mengelola sistem perpustakaan. Anda memiliki akses penuh untuk:</p>
+                        <ul class="feature-list">
+                            <li>Mengelola data user (mahasiswa, dosen, petugas)</li>
+                            <li>Mengelola katalog buku</li>
+                            <li>Mengelola kategori dan rak buku</li>
+                            <li>Memantau aktivitas peminjaman</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
-    
+
     <script src="/static/js/global.js"></script>
     <script src="/static/js/admin/dashboard.js"></script>
 </body>
