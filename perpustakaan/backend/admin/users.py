@@ -14,11 +14,12 @@ def get_all_users():
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT id_user, username, nama, email, role, 
-               DATE_FORMAT(tgl_daftar, '%d-%m-%Y') as tgl_daftar,
-               status
-        FROM USER
-        ORDER BY tgl_daftar DESC
+        SELECT u.id_user, u.username, u.nama_lengkap, u.email, u.no_telepon,
+               u.program_studi, u.fakultas, u.status_aktif, u.id_role,
+               r.nama_role, DATE_FORMAT(u.created_at, '%d-%m-%Y') as created_at
+        FROM USERS u
+        LEFT JOIN ROLES r ON u.id_role = r.id_role
+        ORDER BY u.created_at DESC
     """)
     
     users = cursor.fetchall()
@@ -33,11 +34,12 @@ def get_user_by_id(id_user):
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT id_user, username, nama, email, role, 
-               DATE_FORMAT(tgl_daftar, '%d-%m-%Y') as tgl_daftar,
-               status
-        FROM USER
-        WHERE id_user = %s
+        SELECT u.id_user, u.username, u.nama_lengkap, u.email, u.no_telepon,
+               u.program_studi, u.fakultas, u.status_aktif, u.id_role,
+               r.nama_role
+        FROM USERS u
+        LEFT JOIN ROLES r ON u.id_role = r.id_role
+        WHERE u.id_user = %s
     """, (id_user,))
     
     user = cursor.fetchone()
@@ -46,18 +48,26 @@ def get_user_by_id(id_user):
     
     return user
 
-def create_user(username, nama, email, password, role='MHS'):
+def create_user(username, nama, email, password, role='MHS', no_telepon='08123456789'):
     """Membuat user baru"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Generate ID user based on role
+    id_prefix = 'USR-' + role[:3].upper()
+    
     query = """
-        INSERT INTO USER (username, nama, email, password, role)
-        VALUES (%s, %s, %s, SHA2(%s, 256), %s)
+        INSERT INTO USERS (id_user, username, password, nama_lengkap, email, no_telepon, id_role)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     
     try:
-        cursor.execute(query, (username, nama, email, password, role))
+        # Simple ID generation (in production, use proper sequence)
+        cursor.execute("SELECT COUNT(*) as cnt FROM USERS WHERE id_role = %s", (role,))
+        count = cursor.fetchone()[0]
+        id_user = f"{id_prefix}-{count + 1:03d}"
+        
+        cursor.execute(query, (id_user, username, password, nama, email, no_telepon, role))
         conn.commit()
         return {'success': True, 'message': 'User berhasil dibuat'}
     except mysql.connector.Error as err:
@@ -72,8 +82,8 @@ def update_user(id_user, nama, email, role, status):
     cursor = conn.cursor()
     
     query = """
-        UPDATE USER 
-        SET nama = %s, email = %s, role = %s, status = %s
+        UPDATE USERS 
+        SET nama_lengkap = %s, email = %s, id_role = %s, status_aktif = %s
         WHERE id_user = %s
     """
     
@@ -88,14 +98,18 @@ def update_user(id_user, nama, email, role, status):
         conn.close()
 
 def delete_user(id_user):
-    """Hapus user"""
+    """Hapus user (soft delete dengan set nonaktif)"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        cursor.execute("DELETE FROM USER WHERE id_user = %s", (id_user,))
+        cursor.execute("""
+            UPDATE USERS 
+            SET status_aktif = 'Nonaktif', alasan_nonaktif = 'Dihapus admin'
+            WHERE id_user = %s
+        """, (id_user,))
         conn.commit()
-        return {'success': True, 'message': 'User berhasil dihapus'}
+        return {'success': True, 'message': 'User berhasil dinonaktifkan'}
     except mysql.connector.Error as err:
         return {'success': False, 'message': f'Error: {str(err)}'}
     finally:
@@ -108,8 +122,8 @@ def reset_password(id_user, new_password):
     cursor = conn.cursor()
     
     query = """
-        UPDATE USER 
-        SET password = SHA2(%s, 256)
+        UPDATE USERS 
+        SET password = %s
         WHERE id_user = %s
     """
     

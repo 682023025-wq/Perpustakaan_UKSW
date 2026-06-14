@@ -24,33 +24,34 @@ def proses_peminjaman(id_peminjam, barcode_list, id_petugas_out):
     try:
         # 1. Cek apakah peminjam ada dan aktif
         cursor.execute("""
-            SELECT id_user, nama, role, status 
-            FROM USER 
-            WHERE id_user = %s AND status = 'Aktif'
+            SELECT u.id_user, u.nama_lengkap, r.nama_role as role, r.max_kuota, u.status_aktif
+            FROM USERS u
+            JOIN ROLES r ON u.id_role = r.id_role
+            WHERE u.id_user = %s AND u.status_aktif = 'Aktif'
         """, (id_peminjam,))
         peminjam = cursor.fetchone()
         
         if not peminjam:
             return {'success': False, 'message': 'Peminjam tidak ditemukan atau tidak aktif'}
         
-        # 2. Cek kuota peminjaman (max 5 buku untuk MHS/DSN)
+        # 2. Cek kuota peminjaman berdasarkan role
         cursor.execute("""
             SELECT COUNT(*) as jumlah 
             FROM PEMINJAMAN 
-            WHERE id_peminjam = %s AND status = 'Dipinjam'
+            WHERE id_peminjam = %s AND status_transaksi = 'Dipinjam'
         """, (id_peminjam,))
         jumlah_pinjam_aktif = cursor.fetchone()['jumlah']
         
-        if jumlah_pinjam_aktif + len(barcode_list) > 5:
-            return {'success': False, 'message': f'Kuota peminjaman terlampaui. Sisa kuota: {5 - jumlah_pinjam_aktif}'}
+        max_kuota = peminjam['max_kuota']
+        if jumlah_pinjam_aktif + len(barcode_list) > max_kuota:
+            return {'success': False, 'message': f'Kuota peminjaman terlampaui. Maksimal {max_kuota} buku.'}
         
         # 3. Cek apakah ada denda belum lunas
         cursor.execute("""
-            SELECT SUM(jumlah_denda) as total_denda 
-            FROM DENDA 
-            WHERE id_pinjam IN (
-                SELECT id_pinjam FROM PEMINJAMAN WHERE id_peminjam = %s
-            ) AND status = 'Belum Lunas'
+            SELECT SUM(nominal_denda) as total_denda 
+            FROM DENDA d
+            JOIN PEMINJAMAN p ON d.id_pinjam = p.id_pinjam
+            WHERE p.id_peminjam = %s AND d.status_bayar = 'Belum Lunas'
         """, (id_peminjam,))
         result = cursor.fetchone()
         total_denda = result['total_denda'] or 0
@@ -62,52 +63,61 @@ def proses_peminjaman(id_peminjam, barcode_list, id_petugas_out):
         items_valid = []
         for barcode in barcode_list:
             cursor.execute("""
-                SELECT ib.id_item, ib.id_buku, ib.status, b.judul
+                SELECT ib.id_barcode, ib.isbn, ib.status_pinjam, k.judul
                 FROM ITEM_BUKU ib
-                JOIN BUKU b ON ib.id_buku = b.id_buku
-                WHERE ib.barcode = %s
+                JOIN KATALOG_BUKU k ON ib.isbn = k.isbn
+                WHERE ib.id_barcode = %s
             """, (barcode,))
             item = cursor.fetchone()
             
             if not item:
                 return {'success': False, 'message': f'Barcode {barcode} tidak ditemukan'}
             
-            if item['status'] != 'Tersedia':
+            if item['status_pinjam'] != 'Tersedia':
                 return {'success': False, 'message': f'Buku "{item["judul"]}" sedang tidak tersedia'}
             
             items_valid.append(item)
         
-        # 5. Buat record PEMINJAMAN
+        # 5. Buat record PEMINJAMAN untuk setiap buku
         tgl_pinjam = date.today()
-        tgl_kembali_wajib = tgl_pinjam + timedelta(days=7)  # 7 hari pinjaman
         
-        cursor.execute("""
-            INSERT INTO PEMINJAMAN (id_peminjam, id_petugas_out, tgl_pinjam, tgl_kembali_wajib, status)
-            VALUES (%s, %s, %s, %s, 'Dipinjam')
-        """, (id_peminjam, id_petugas_out, tgl_pinjam, tgl_kembali_wajib))
+        # Dapatkan durasi pinjam dari role
+        cursor.execute("SELECT durasi_pinjam FROM ROLES WHERE id_role = %s", (peminjam['role'],))
+        durasi = cursor.fetchone()['durasi_pinjam']
+        tgl_jatuh_tempo = tgl_pinjam + timedelta(days=durasi)
         
-        id_pinjam = cursor.lastrowid
-        
-        # 6. Buat DETAIL_PINJAM dan update status ITEM_BUKU
+        hasil_pinjam = []
         for item in items_valid:
-            cursor.execute("""
-                INSERT INTO DETAIL_PINJAM (id_pinjam, id_item)
-                VALUES (%s, %s)
-            """, (id_pinjam, item['id_item']))
+            # Generate ID pinjam unik
+            cursor.execute("SELECT CONCAT('P-', DATE_FORMAT(NOW(), '%Y'), '-', LPAD(COALESCE(MAX(CAST(SUBSTRING_INDEX(id_pinjam, '-', -1) AS UNSIGNED)), 0) + 1, 3, '0')) as new_id FROM PEMINJAMAN WHERE id_pinjam LIKE CONCAT('P-', YEAR(NOW()), '-%')")
+            id_pinjam_result = cursor.fetchone()
+            id_pinjam = id_pinjam_result['new_id']
             
             cursor.execute("""
+                INSERT INTO PEMINJAMAN (id_pinjam, id_peminjam, id_barcode, tgl_pinjam, tgl_jatuh_tempo, id_petugas_out, status_transaksi)
+                VALUES (%s, %s, %s, %s, %s, %s, 'Dipinjam')
+            """, (id_pinjam, id_peminjam, item['id_barcode'], tgl_pinjam, tgl_jatuh_tempo, id_petugas_out))
+            
+            # Update status ITEM_BUKU
+            cursor.execute("""
                 UPDATE ITEM_BUKU 
-                SET status = 'Dipinjam'
-                WHERE id_item = %s
-            """, (item['id_item'],))
+                SET status_pinjam = 'Dipinjam'
+                WHERE id_barcode = %s
+            """, (item['id_barcode'],))
+            
+            hasil_pinjam.append({
+                'id_pinjam': id_pinjam,
+                'barcode': item['id_barcode'],
+                'judul': item['judul']
+            })
         
         conn.commit()
         
         return {
             'success': True, 
-            'message': 'Peminjaman berhasil diproses',
-            'id_pinjam': id_pinjam,
-            'tgl_kembali_wajib': tgl_kembali_wajib.strftime('%d-%m-%Y'),
+            'message': f'Peminjaman berhasil diproses ({len(items_valid)} buku)',
+            'detail': hasil_pinjam,
+            'tgl_kembali_wajib': tgl_jatuh_tempo.strftime('%d-%m-%Y'),
             'jumlah_buku': len(items_valid)
         }
         
@@ -132,9 +142,9 @@ def proses_pengembalian(id_pinjam, id_petugas_in):
     try:
         # 1. Cek apakah peminjaman ada
         cursor.execute("""
-            SELECT p.*, u.nama as peminjam
+            SELECT p.*, u.nama_lengkap as peminjam
             FROM PEMINJAMAN p
-            JOIN USER u ON p.id_peminjam = u.id_user
+            JOIN USERS u ON p.id_peminjam = u.id_user
             WHERE p.id_pinjam = %s
         """, (id_pinjam,))
         peminjaman = cursor.fetchone()
@@ -142,12 +152,12 @@ def proses_pengembalian(id_pinjam, id_petugas_in):
         if not peminjaman:
             return {'success': False, 'message': 'ID peminjaman tidak ditemukan'}
         
-        if peminjaman['status'] != 'Dipinjam':
+        if peminjaman['status_transaksi'] != 'Dipinjam':
             return {'success': False, 'message': 'Status peminjaman bukan "Dipinjam"'}
         
         # 2. Hitung denda jika terlambat
         tgl_kembali = date.today()
-        tgl_kembali_wajib = peminjaman['tgl_kembali_wajib']
+        tgl_kembali_wajib = peminjaman['tgl_jatuh_tempo']
         denda = 0
         
         if tgl_kembali > tgl_kembali_wajib:
@@ -157,24 +167,28 @@ def proses_pengembalian(id_pinjam, id_petugas_in):
         # 3. Update PEMINJAMAN
         cursor.execute("""
             UPDATE PEMINJAMAN 
-            SET tgl_kembali = %s, id_petugas_in = %s, status = 'Dikembalikan'
+            SET tgl_kembali = %s, id_petugas_in = %s, status_transaksi = 'Selesai'
             WHERE id_pinjam = %s
         """, (tgl_kembali, id_petugas_in, id_pinjam))
         
         # 4. Update status ITEM_BUKU menjadi Tersedia
         cursor.execute("""
-            UPDATE ITEM_BUKU ib
-            JOIN DETAIL_PINJAM dp ON ib.id_item = dp.id_item
-            SET ib.status = 'Tersedia'
-            WHERE dp.id_pinjam = %s
+            UPDATE ITEM_BUKU 
+            SET status_pinjam = 'Tersedia'
+            WHERE id_barcode IN (SELECT id_barcode FROM PEMINJAMAN WHERE id_pinjam = %s)
         """, (id_pinjam,))
         
         # 5. Jika ada denda, buat record DENDA
         if denda > 0:
+            # Generate ID denda unik
+            cursor.execute("SELECT CONCAT('D-', DATE_FORMAT(NOW(), '%Y'), '-', LPAD(COALESCE(MAX(CAST(SUBSTRING_INDEX(id_denda, '-', -1) AS UNSIGNED)), 0) + 1, 3, '0')) as new_id FROM DENDA WHERE id_denda LIKE CONCAT('D-', YEAR(NOW()), '-%')")
+            id_denda_result = cursor.fetchone()
+            id_denda = id_denda_result['new_id']
+            
             cursor.execute("""
-                INSERT INTO DENDA (id_pinjam, jumlah_denda, status)
-                VALUES (%s, %s, 'Belum Lunas')
-            """, (id_pinjam, denda))
+                INSERT INTO DENDA (id_denda, id_pinjam, nominal_denda, status_bayar)
+                VALUES (%s, %s, %s, 'Belum Lunas')
+            """, (id_denda, id_pinjam, denda))
         
         conn.commit()
         
@@ -203,17 +217,15 @@ def get_detail_peminjaman(id_pinjam):
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT p.id_pinjam, u.nama as peminjam, u.nim_nip,
-               p.tgl_pinjam, p.tgl_kembali_wajib, p.tgl_kembali,
-               p.status, pt_out.nama as petugas_out, pt_in.nama as petugas_in,
-               b.judul, ib.barcode
+        SELECT p.id_pinjam, u.nama_lengkap as peminjam,
+               p.tgl_pinjam, p.tgl_jatuh_tempo, p.tgl_kembali,
+               p.status_transaksi, pt_out.nama_lengkap as petugas_out, pt_in.nama_lengkap as petugas_in,
+               k.judul, p.id_barcode
         FROM PEMINJAMAN p
-        JOIN USER u ON p.id_peminjam = u.id_user
-        LEFT JOIN USER pt_out ON p.id_petugas_out = pt_out.id_user
-        LEFT JOIN USER pt_in ON p.id_petugas_in = pt_in.id_user
-        JOIN DETAIL_PINJAM dp ON p.id_pinjam = dp.id_pinjam
-        JOIN ITEM_BUKU ib ON dp.id_item = ib.id_item
-        JOIN BUKU b ON ib.id_buku = b.id_buku
+        JOIN USERS u ON p.id_peminjam = u.id_user
+        LEFT JOIN USERS pt_out ON p.id_petugas_out = pt_out.id_user
+        LEFT JOIN USERS pt_in ON p.id_petugas_in = pt_in.id_user
+        JOIN KATALOG_BUKU k ON p.id_barcode = k.isbn
         WHERE p.id_pinjam = %s
     """, (id_pinjam,))
     
@@ -229,12 +241,12 @@ def get_riwayat_peminjaman(id_peminjam=None, status=None):
     cursor = conn.cursor(dictionary=True)
     
     query = """
-        SELECT p.id_pinjam, u.nama as peminjam,
-               p.tgl_pinjam, p.tgl_kembali_wajib, p.tgl_kembali,
-               p.status, pt_out.nama as petugas_out
+        SELECT DISTINCT p.id_pinjam, u.nama_lengkap as peminjam,
+               p.tgl_pinjam, p.tgl_jatuh_tempo, p.tgl_kembali,
+               p.status_transaksi, pt_out.nama_lengkap as petugas_out
         FROM PEMINJAMAN p
-        JOIN USER u ON p.id_peminjam = u.id_user
-        LEFT JOIN USER pt_out ON p.id_petugas_out = pt_out.id_user
+        JOIN USERS u ON p.id_peminjam = u.id_user
+        LEFT JOIN USERS pt_out ON p.id_petugas_out = pt_out.id_user
         WHERE 1=1
     """
     
@@ -245,7 +257,7 @@ def get_riwayat_peminjaman(id_peminjam=None, status=None):
         params.append(id_peminjam)
     
     if status:
-        query += " AND p.status = %s"
+        query += " AND p.status_transaksi = %s"
         params.append(status)
     
     query += " ORDER BY p.tgl_pinjam DESC"
