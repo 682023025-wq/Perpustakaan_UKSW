@@ -15,19 +15,23 @@ def get_dashboard_stats():
     
     stats = {}
     
-    # Total user
-    cursor.execute("SELECT COUNT(*) as total FROM USER WHERE role IN ('MHS', 'DSN')")
+    # Total user (MHS + DSN)
+    cursor.execute("SELECT COUNT(*) as total FROM USERS WHERE id_role IN ('MHS', 'DSN')")
     stats['total_users'] = cursor.fetchone()['total']
     
-    # Total buku
-    cursor.execute("SELECT COUNT(*) as total FROM BUKU")
+    # Total buku (katalog)
+    cursor.execute("SELECT COUNT(*) as total FROM KATALOG_BUKU")
     stats['total_buku'] = cursor.fetchone()['total']
+    
+    # Total item buku
+    cursor.execute("SELECT COUNT(*) as total FROM ITEM_BUKU")
+    stats['total_item'] = cursor.fetchone()['total']
     
     # Total peminjaman aktif
     cursor.execute("""
         SELECT COUNT(*) as total 
         FROM PEMINJAMAN 
-        WHERE status = 'Dipinjam'
+        WHERE status_transaksi = 'Dipinjam'
     """)
     stats['peminjaman_aktif'] = cursor.fetchone()['total']
     
@@ -35,19 +39,18 @@ def get_dashboard_stats():
     cursor.execute("""
         SELECT COUNT(*) as total 
         FROM DENDA 
-        WHERE status = 'Belum Lunas'
+        WHERE status_bayar = 'Belum Lunas'
     """)
     stats['denda_belum_lunas'] = cursor.fetchone()['total']
     
     # Peminjaman terbaru
     cursor.execute("""
-        SELECT p.id_pinjam, u.nama as peminjam, b.judul, 
-               p.tgl_pinjam, p.tgl_kembali_wajib, p.status
+        SELECT p.id_pinjam, u.nama_lengkap as peminjam, k.judul, 
+               p.tgl_pinjam, p.tgl_jatuh_tempo, p.status_transaksi
         FROM PEMINJAMAN p
-        JOIN USER u ON p.id_peminjam = u.id_user
-        JOIN DETAIL_PINJAM dp ON p.id_pinjam = dp.id_pinjam
-        JOIN ITEM_BUKU ib ON dp.id_item = ib.id_item
-        JOIN BUKU b ON ib.id_buku = b.id_buku
+        JOIN USERS u ON p.id_peminjam = u.id_user
+        JOIN ITEM_BUKU ib ON p.id_barcode = ib.id_barcode
+        JOIN KATALOG_BUKU k ON ib.isbn = k.isbn
         ORDER BY p.tgl_pinjam DESC
         LIMIT 5
     """)
@@ -65,11 +68,11 @@ def get_recent_activities():
     
     cursor.execute("""
         SELECT 'peminjaman' as jenis, id_pinjam as id, 
-               tgl_pinjam as tanggal, status
+               tgl_pinjam as tanggal, status_transaksi as status
         FROM PEMINJAMAN
         UNION ALL
         SELECT 'pengembalian' as jenis, id_pinjam as id,
-               tgl_kembali as tanggal, status
+               tgl_kembali as tanggal, status_transaksi as status
         FROM PEMINJAMAN
         WHERE tgl_kembali IS NOT NULL
         ORDER BY tanggal DESC

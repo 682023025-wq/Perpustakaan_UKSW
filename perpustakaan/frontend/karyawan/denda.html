@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denda - Sistem Informasi Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/karyawan/denda.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            📚 Sistem Informasi Perpustakaan
+        </div>
+        <div class="navbar-user">
+            <div class="user-info">
+                <div class="nama" id="userName">Petugas</div>
+                <div class="role">Karyawan/Petugas</div>
+            </div>
+            <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="/karyawan/dashboard.html">📊 Dashboard</a></li>
+            <li><a href="/karyawan/peminjaman.html">📖 Peminjaman</a></li>
+            <li><a href="/karyawan/pengembalian.html">📥 Pengembalian</a></li>
+            <li><a href="/karyawan/denda.html" class="active">💰 Denda</a></li>
+            <li><a href="/karyawan/laporan.html">📋 Laporan</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>💰 Manajemen Denda</h1>
+            <p>Kelola dan proses pembayaran denda keterlambatan</p>
+        </div>
+
+        <div id="alertBox"></div>
+
+        <!-- Filter & Search -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Filter Denda</h3>
+            </div>
+            <div class="card-body">
+                <form id="filterForm" class="filter-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filterStatus" class="form-label">Status</label>
+                            <select id="filterStatus" class="form-control">
+                                <option value="">Semua</option>
+                                <option value="Belum Lunas">Belum Lunas</option>
+                                <option value="Lunas">Lunas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="searchDenda" class="form-label">Cari</label>
+                            <input type="text" id="searchDenda" class="form-control" placeholder="ID Denda / Nama Peminjam">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">🔍 Cari</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Reset</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Daftar Denda -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="card-title">Daftar Denda</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID Denda</th>
+                                <th>ID Pinjam</th>
+                                <th>Peminjam</th>
+                                <th>Nominal</th>
+                                <th>Status</th>
+                                <th>Tgl Bayar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dendaTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistik Denda -->
+        <div class="stats-grid mt-4">
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-info">
+                    <h3 id="totalBelumLunas">0</h3>
+                    <p>Denda Belum Lunas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <h3 id="totalLunas">0</h3>
+                    <p>Denda Lunas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-info">
+                    <h3 id="totalNominalBelumLunas">Rp 0</h3>
+                    <p>Total Nominal Belum Lunas</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/karyawan/denda.js"></script>
+</body>
+</html>

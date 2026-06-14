@@ -7,7 +7,7 @@ DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
     'password': '',  # Default XAMPP/WAMP kosong
-    'database': 'perpustakaan_db',
+    'database': 'db_perpustakaan',
     'charset': 'utf8mb4'
 }
 
