@@ -14,19 +14,19 @@ def get_all_denda(status=None):
     cursor = conn.cursor(dictionary=True)
     
     query = """
-        SELECT d.id_denda, d.id_pinjam, u.nama as peminjam,
-               d.jumlah_denda, d.status, d.tgl_bayar,
-               p.tgl_kembali_wajib, p.tgl_kembali
+        SELECT d.id_denda, d.id_pinjam, u.nama_lengkap as peminjam,
+               d.nominal_denda, d.status_bayar, d.tgl_bayar,
+               p.tgl_jatuh_tempo, p.tgl_kembali
         FROM DENDA d
         JOIN PEMINJAMAN p ON d.id_pinjam = p.id_pinjam
-        JOIN USER u ON p.id_peminjam = u.id_user
+        JOIN USERS u ON p.id_peminjam = u.id_user
         WHERE 1=1
     """
     
     params = []
     
     if status:
-        query += " AND d.status = %s"
+        query += " AND d.status_bayar = %s"
         params.append(status)
     
     query += " ORDER BY d.id_denda DESC"
@@ -44,11 +44,11 @@ def get_denda_by_id(id_denda):
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT d.*, u.nama as peminjam, u.nim_nip,
-               p.tgl_kembali_wajib, p.tgl_kembali
+        SELECT d.*, u.nama_lengkap as peminjam,
+               p.tgl_jatuh_tempo, p.tgl_kembali
         FROM DENDA d
         JOIN PEMINJAMAN p ON d.id_pinjam = p.id_pinjam
-        JOIN USER u ON p.id_peminjam = u.id_user
+        JOIN USERS u ON p.id_peminjam = u.id_user
         WHERE d.id_denda = %s
     """, (id_denda,))
     
@@ -72,8 +72,8 @@ def bayar_denda(id_denda, id_petugas):
     try:
         # Cek apakah denda ada dan belum lunas
         cursor.execute("""
-            SELECT jumlah_denda FROM DENDA 
-            WHERE id_denda = %s AND status = 'Belum Lunas'
+            SELECT nominal_denda FROM DENDA 
+            WHERE id_denda = %s AND status_bayar = 'Belum Lunas'
         """, (id_denda,))
         
         denda = cursor.fetchone()
@@ -85,7 +85,7 @@ def bayar_denda(id_denda, id_petugas):
         from datetime import date
         cursor.execute("""
             UPDATE DENDA 
-            SET status = 'Lunas', tgl_bayar = %s
+            SET status_bayar = 'Lunas', tgl_bayar = %s
             WHERE id_denda = %s
         """, (date.today(), id_denda))
         
@@ -93,7 +93,7 @@ def bayar_denda(id_denda, id_petugas):
         
         return {
             'success': True,
-            'message': f'Pembayaran denda berhasil. Jumlah: Rp {denda["jumlah_denda"]:,}'
+            'message': f'Pembayaran denda berhasil. Jumlah: Rp {denda["nominal_denda"]:,}'
         }
         
     except mysql.connector.Error as err:
@@ -109,9 +109,9 @@ def get_total_denda_belum_lunas(id_peminjam=None):
     cursor = conn.cursor(dictionary=True)
     
     query = """
-        SELECT SUM(jumlah_denda) as total 
+        SELECT SUM(nominal_denda) as total 
         FROM DENDA 
-        WHERE status = 'Belum Lunas'
+        WHERE status_bayar = 'Belum Lunas'
     """
     
     params = []
@@ -140,28 +140,28 @@ def get_statistik_denda():
     
     # Total denda belum lunas
     cursor.execute("""
-        SELECT COUNT(*) as jumlah, SUM(jumlah_denda) as total 
+        SELECT COUNT(*) as jumlah, SUM(nominal_denda) as total 
         FROM DENDA 
-        WHERE status = 'Belum Lunas'
+        WHERE status_bayar = 'Belum Lunas'
     """)
     result = cursor.fetchone()
     stats['belum_lunas'] = {
         'jumlah': result['jumlah'] or 0,
-        'total': result['total'] or 0
+        'total': float(result['total']) if result['total'] else 0
     }
     
     # Total denda lunas bulan ini
     cursor.execute("""
-        SELECT COUNT(*) as jumlah, SUM(jumlah_denda) as total 
+        SELECT COUNT(*) as jumlah, SUM(nominal_denda) as total 
         FROM DENDA 
-        WHERE status = 'Lunas' 
+        WHERE status_bayar = 'Lunas' 
           AND MONTH(tgl_bayar) = MONTH(CURDATE())
           AND YEAR(tgl_bayar) = YEAR(CURDATE())
     """)
     result = cursor.fetchone()
     stats['lunas_bulan_ini'] = {
         'jumlah': result['jumlah'] or 0,
-        'total': result['total'] or 0
+        'total': float(result['total']) if result['total'] else 0
     }
     
     cursor.close()
