@@ -27,6 +27,7 @@ from backend.admin.kategori import kategori_bp
 from backend.admin.rak import rak_bp
 from backend.karyawan.dashboard import karyawan_dashboard_bp
 from backend.karyawan.peminjaman import peminjaman_bp
+from backend.karyawan.pengembalian import pengembalian_bp
 from backend.karyawan.denda import denda_bp
 from backend.karyawan.laporan import laporan_bp
 
@@ -37,6 +38,7 @@ app.register_blueprint(kategori_bp, url_prefix='/admin/kategori')
 app.register_blueprint(rak_bp, url_prefix='/admin/rak')
 app.register_blueprint(karyawan_dashboard_bp, url_prefix='/karyawan')
 app.register_blueprint(peminjaman_bp, url_prefix='/karyawan/peminjaman')
+app.register_blueprint(pengembalian_bp, url_prefix='/karyawan/pengembalian')
 app.register_blueprint(denda_bp, url_prefix='/karyawan/denda')
 app.register_blueprint(laporan_bp, url_prefix='/karyawan/laporan')
 
