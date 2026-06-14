@@ -1,0 +1,85 @@
+/* Denda styles */
+
+.form-denda {
+    max-width: 600px;
+}
+
+.denda-card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.denda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.denda-header h4 {
+    color: var(--primary-red);
+    font-size: 1.2rem;
+}
+
+.denda-info {
+    background: var(--gray-100);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.denda-info p {
+    margin: 5px 0;
+    color: var(--gray-800);
+}
+
+.denda-info strong {
+    color: var(--primary-red-dark);
+}
+
+.status-belum-lunas {
+    background: #ffebee;
+    color: var(--primary-red-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-lunas {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-bayar {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-red) 100%);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-bayar:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+#denda-table {
+    width: 100%;
+}
+
+#denda-table th {
+    white-space: nowrap;
+}
