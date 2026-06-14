@@ -3,73 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peminjaman - Perpustakaan</title>
+    <title>Peminjaman Buku - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/karyawan/peminjaman.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
-        <ul class="navbar-nav">
-            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    
-    <div class="main-content">
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/karyawan/dashboard">📊 Dashboard</a></li>
-                <li><a href="/karyawan/peminjaman" class="active">📤 Peminjaman</a></li>
-                <li><a href="/karyawan/pengembalian">📥 Pengembalian</a></li>
-                <li><a href="/karyawan/denda">💰 Denda</a></li>
-                <li><a href="/karyawan/laporan">📋 Laporan</a></li>
-            </ul>
-        </aside>
-        
-        <main class="content-area">
-            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Peminjaman Buku</h1>
-            
-            <div class="card">
-                <div class="card-header">Form Peminjaman</div>
-                <div id="alert-container"></div>
-                
-                <form id="peminjaman-form">
-                    <div class="form-group">
-                        <label for="id_peminjam">ID Peminjam (User ID)</label>
-                        <input type="text" id="id_peminjam" class="form-control" required placeholder="Contoh: USR-MHS01">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="id_barcode">Barcode Buku</label>
-                        <input type="text" id="id_barcode" class="form-control" required placeholder="Contoh: BC-ORC-001">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Proses Peminjaman</button>
-                </form>
+            <div class="sidebar-header">
+                <h1 class="logo">PERPUSTAKAAN</h1>
+                <p class="subtitle">Petugas Portal</p>
             </div>
             
-            <div class="card">
-                <div class="card-header">Daftar Peminjaman Aktif</div>
-                <div class="table-responsive">
-                    <table id="peminjaman-table">
-                        <thead>
-                            <tr>
-                                <th>ID Pinjam</th>
-                                <th>Peminjam</th>
-                                <th>Judul Buku</th>
-                                <th>Tgl Pinjam</th>
-                                <th>Jatuh Tempo</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/karyawan/dashboard" class="nav-link">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/karyawan/peminjaman" class="nav-link">
+                            <span class="nav-text">Peminjaman</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/pengembalian" class="nav-link">
+                            <span class="nav-text">Pengembalian</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/denda" class="nav-link">
+                            <span class="nav-text">Denda</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/laporan" class="nav-link">
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ session.get('nama_lengkap', 'P')[0].upper() }}</div>
+                    <div class="user-details">
+                        <p class="user-name">{{ session.get('nama_lengkap') }}</p>
+                        <p class="user-role">Petugas Perpustakaan</p>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Peminjaman Buku</h2>
+                    <p>Proses peminjaman buku untuk user yang datang langsung ke perpustakaan</p>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Form Peminjaman -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Form Peminjaman</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="alert-container"></div>
+                        
+                        <div class="info-box">
+                            <p><strong>Panduan:</strong> Masukkan ID User (NIM/NIP) dan scan/ketik Barcode Buku. Sistem akan otomatis memvalidasi kuota, status denda, dan ketersediaan buku.</p>
+                        </div>
+
+                        <form id="peminjaman-form" class="form-grid">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="id_peminjam">ID Peminjam <span class="required">*</span></label>
+                                    <input type="text" id="id_peminjam" required placeholder="Contoh: USR-MHS01">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="id_barcode">Barcode Buku <span class="required">*</span></label>
+                                    <input type="text" id="id_barcode" required placeholder="Contoh: BC-ORC-001">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                    Proses Peminjaman
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabel Peminjaman Aktif -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Daftar Peminjaman Aktif</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="peminjaman-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pinjam</th>
+                                        <th>Peminjam</th>
+                                        <th>Judul Buku</th>
+                                        <th>Tgl Pinjam</th>
+                                        <th>Jatuh Tempo</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="peminjaman-tbody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-    
+
     <script src="/static/js/global.js"></script>
     <script src="/static/js/karyawan/peminjaman.js"></script>
 </body>

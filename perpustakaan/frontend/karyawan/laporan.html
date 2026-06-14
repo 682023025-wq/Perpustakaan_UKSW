@@ -3,55 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan - Perpustakaan</title>
+    <title>Laporan Transaksi - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/karyawan/laporan.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
-        <ul class="navbar-nav">
-            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    
-    <div class="main-content">
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/karyawan/dashboard">📊 Dashboard</a></li>
-                <li><a href="/karyawan/peminjaman">📤 Peminjaman</a></li>
-                <li><a href="/karyawan/pengembalian">📥 Pengembalian</a></li>
-                <li><a href="/karyawan/denda">💰 Denda</a></li>
-                <li><a href="/karyawan/laporan" class="active">📋 Laporan</a></li>
-            </ul>
-        </aside>
-        
-        <main class="content-area">
-            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Laporan Transaksi</h1>
+            <div class="sidebar-header">
+                <h1 class="logo">PERPUSTAKAAN</h1>
+                <p class="subtitle">Petugas Portal</p>
+            </div>
             
-            <div class="card">
-                <div class="card-header">Riwayat Peminjaman</div>
-                <div class="table-responsive">
-                    <table id="laporan-table">
-                        <thead>
-                            <tr>
-                                <th>ID Pinjam</th>
-                                <th>Peminjam</th>
-                                <th>Judul Buku</th>
-                                <th>Tgl Pinjam</th>
-                                <th>Tgl Kembali</th>
-                                <th>Status</th>
-                                <th>Petugas</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/karyawan/dashboard" class="nav-link">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/peminjaman" class="nav-link">
+                            <span class="nav-text">Peminjaman</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/pengembalian" class="nav-link">
+                            <span class="nav-text">Pengembalian</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/denda" class="nav-link">
+                            <span class="nav-text">Denda</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/karyawan/laporan" class="nav-link">
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ session.get('nama_lengkap', 'P')[0].upper() }}</div>
+                    <div class="user-details">
+                        <p class="user-name">{{ session.get('nama_lengkap') }}</p>
+                        <p class="user-role">Petugas Perpustakaan</p>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Laporan Transaksi</h2>
+                    <p>Pantau riwayat peminjaman dan statistik perpustakaan</p>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Summary Cards -->
+                <div class="laporan-summary">
+                    <div class="summary-card">
+                        <h5>Total Peminjaman</h5>
+                        <div class="value" id="total-pinjam">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Selesai / Kembali</h5>
+                        <div class="value text-success" id="total-selesai">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Sedang Dipinjam</h5>
+                        <div class="value text-warning" id="total-dipinjam">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Terlambat</h5>
+                        <div class="value text-danger" id="total-terlambat">0</div>
+                    </div>
+                </div>
+
+                <!-- Filter & Table Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Riwayat Peminjaman</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="laporan-filters">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label for="filter-tgl-mulai">Tanggal Mulai</label>
+                                    <input type="date" id="filter-tgl-mulai" class="form-control">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filter-tgl-akhir">Tanggal Akhir</label>
+                                    <input type="date" id="filter-tgl-akhir" class="form-control">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filter-status">Status</label>
+                                    <select id="filter-status" class="form-control">
+                                        <option value="">Semua Status</option>
+                                        <option value="Dipinjam">Dipinjam</option>
+                                        <option value="Selesai">Selesai</option>
+                                        <option value="Terlambat">Terlambat</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group" style="flex: 2;">
+                                    <label for="search-laporan">Cari</label>
+                                    <input type="text" id="search-laporan" class="form-control" placeholder="Nama peminjam atau judul buku...">
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="btn btn-filter" onclick="filterLaporan()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+                                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                        </svg>
+                                        Filter
+                                    </button>
+                                    <button class="btn btn-export" onclick="exportLaporan()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table id="laporan-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pinjam</th>
+                                        <th>Peminjam</th>
+                                        <th>Judul Buku</th>
+                                        <th>Tgl Pinjam</th>
+                                        <th>Jatuh Tempo</th>
+                                        <th>Tgl Kembali</th>
+                                        <th>Status</th>
+                                        <th>Petugas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="laporan-tbody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-    
+
     <script src="/static/js/global.js"></script>
     <script src="/static/js/karyawan/laporan.js"></script>
 </body>

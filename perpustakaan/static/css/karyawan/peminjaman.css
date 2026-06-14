@@ -1,79 +1,415 @@
-/* Peminjaman styles */
-
-.form-peminjaman {
-    max-width: 600px;
+/* Peminjaman styles - Modern Red Theme */
+/* App Container Layout */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f7fa;
 }
 
-#peminjaman-form .form-group {
-    margin-bottom: 25px;
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
 }
 
-#peminjaman-form label {
+.sidebar-header {
+    padding: 40px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    color: var(--white);
+}
+
+.subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.8;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: 30px 0;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 8px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 30px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border-left-color: var(--white);
+}
+
+.nav-item.active .nav-link {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    border-left-color: var(--white);
+}
+
+.nav-text {
+    margin-left: 0;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 25px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--primary-red);
+    margin-right: 12px;
 }
 
-#peminjaman-form .form-control {
-    border-color: var(--gray-300);
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: var(--white);
+}
+
+.user-role {
+    font-size: 12px;
+    opacity: 0.7;
+    margin: 0;
+}
+
+.logout-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
     transition: all 0.3s ease;
 }
 
-#peminjaman-form .form-control:focus {
-    border-color: var(--primary-red);
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar {
+    background: var(--white);
+    padding: 30px 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.page-title h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 8px 0;
+}
+
+.page-title p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.content-wrapper {
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+/* Info Box */
+.info-box {
+    background: #fff5f5;
+    border-left: 4px solid #e53935;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    color: #c62828;
+}
+
+/* Form Grid Layout */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #e53935;
+    margin-left: 2px;
+}
+
+.form-group input {
+    padding: 12px 14px;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #e53935;
     box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
 }
 
-.peminjaman-info {
-    background: var(--primary-red-light);
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    border-left: 4px solid var(--primary-red);
+.form-group input::placeholder {
+    color: #9ca3af;
 }
 
-.peminjaman-info h4 {
-    color: var(--primary-red-dark);
-    margin-bottom: 10px;
+.form-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 10px;
 }
 
-.peminjaman-info ul {
-    list-style: none;
-    padding-left: 0;
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.peminjaman-info li {
-    padding: 5px 0;
-    color: var(--gray-800);
+.btn-primary {
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    color: var(--white);
 }
 
-.peminjaman-info li:before {
-    content: "✓ ";
-    color: var(--primary-red);
-    font-weight: bold;
+.btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: #4b5563;
+}
+
+.btn-secondary:hover {
+    background: var(--gray-300);
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
 }
 
 #peminjaman-table {
     width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+}
+
+#peminjaman-table thead {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffebeb 100%);
+    border-bottom: 2px solid #e53935;
 }
 
 #peminjaman-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: #c62828;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     white-space: nowrap;
 }
 
+#peminjaman-table tbody tr {
+    border-bottom: 1px solid var(--gray-200);
+    transition: all 0.2s ease;
+}
+
+#peminjaman-table tbody tr:hover {
+    background: #fafafa;
+}
+
+#peminjaman-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+#peminjaman-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+#peminjaman-table td:first-child {
+    font-weight: 600;
+    color: #1a1a2e;
+    font-family: 'Courier New', monospace;
+}
+
+/* Status Badges */
 .status-badge {
     display: inline-block;
-    padding: 4px 12px;
+    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 12px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .status-dipinjam {
-    background: #fff3e0;
-    color: #ef6c00;
+    background: #dbeafe;
+    color: #1e40af;
 }
 
-.status-tersedia {
-    background: #e8f5e9;
-    color: #2e7d32;
+.status-selesai {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-terlambat {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    #peminjaman-table {
+        font-size: 12px;
+    }
+    
+    #peminjaman-table th,
+    #peminjaman-table td {
+        padding: 12px 10px;
+    }
 }

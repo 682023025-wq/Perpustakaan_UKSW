@@ -3,68 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengembalian - Perpustakaan</title>
+    <title>Pengembalian Buku - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/karyawan/pengembalian.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
-        <ul class="navbar-nav">
-            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    
-    <div class="main-content">
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/karyawan/dashboard">📊 Dashboard</a></li>
-                <li><a href="/karyawan/peminjaman">📤 Peminjaman</a></li>
-                <li><a href="/karyawan/pengembalian" class="active">📥 Pengembalian</a></li>
-                <li><a href="/karyawan/denda">💰 Denda</a></li>
-                <li><a href="/karyawan/laporan">📋 Laporan</a></li>
-            </ul>
-        </aside>
-        
-        <main class="content-area">
-            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Pengembalian Buku</h1>
-            
-            <div class="card">
-                <div class="card-header">Form Pengembalian</div>
-                <div id="alert-container"></div>
-                
-                <form id="pengembalian-form">
-                    <div class="form-group">
-                        <label for="id_pinjam">ID Peminjaman</label>
-                        <input type="text" id="id_pinjam" class="form-control" required placeholder="Contoh: P-2026-001">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Proses Pengembalian</button>
-                </form>
+            <div class="sidebar-header">
+                <h1 class="logo">PERPUSTAKAAN</h1>
+                <p class="subtitle">Petugas Portal</p>
             </div>
             
-            <div class="card">
-                <div class="card-header">Riwayat Pengembalian Hari Ini</div>
-                <div class="table-responsive">
-                    <table id="pengembalian-table">
-                        <thead>
-                            <tr>
-                                <th>ID Pinjam</th>
-                                <th>Peminjam</th>
-                                <th>Buku</th>
-                                <th>Tgl Kembali</th>
-                                <th>Denda</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/karyawan/dashboard" class="nav-link">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/peminjaman" class="nav-link">
+                            <span class="nav-text">Peminjaman</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/karyawan/pengembalian" class="nav-link">
+                            <span class="nav-text">Pengembalian</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/denda" class="nav-link">
+                            <span class="nav-text">Denda</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/laporan" class="nav-link">
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ session.get('nama_lengkap', 'P')[0].upper() }}</div>
+                    <div class="user-details">
+                        <p class="user-name">{{ session.get('nama_lengkap') }}</p>
+                        <p class="user-role">Petugas Perpustakaan</p>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Pengembalian Buku</h2>
+                    <p>Proses penerimaan buku yang dikembalikan dan perhitungan denda</p>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Form Pengembalian -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Form Pengembalian</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="alert-container"></div>
+                        
+                        <div class="info-box">
+                            <p><strong>Panduan:</strong> Masukkan atau scan ID Peminjaman. Sistem akan otomatis menampilkan detail buku, tanggal jatuh tempo, dan menghitung denda jika terjadi keterlambatan.</p>
+                        </div>
+
+                        <form id="pengembalian-form" class="form-grid">
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="id_pinjam">ID Peminjaman <span class="required">*</span></label>
+                                    <input type="text" id="id_pinjam" required placeholder="Contoh: P-2026-001">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <polyline points="9 15 12 18 15 15"></polyline>
+                                        <line x1="12" y1="12" x2="12" y2="18"></line>
+                                    </svg>
+                                    Proses Pengembalian
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabel Riwayat Pengembalian -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Riwayat Pengembalian Hari Ini</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="pengembalian-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pinjam</th>
+                                        <th>Peminjam</th>
+                                        <th>Judul Buku</th>
+                                        <th>Tgl Kembali</th>
+                                        <th>Denda</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pengembalian-tbody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-    
+
     <script src="/static/js/global.js"></script>
     <script src="/static/js/karyawan/pengembalian.js"></script>
 </body>

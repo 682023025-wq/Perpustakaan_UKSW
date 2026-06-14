@@ -66,7 +66,7 @@
             <header class="top-bar">
                 <div class="page-title">
                     <h2>Dashboard Petugas</h2>
-                    <p>Kelola transaksi peminjaman dan pengembalian buku</p>
+                    <p>Pantau transaksi dan aktivitas perpustakaan hari ini</p>
                 </div>
             </header>
 
@@ -130,19 +130,63 @@
                     </div>
                 </div>
 
-                <!-- Welcome Card -->
+                <!-- Quick Actions Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h3>Selamat Datang di Panel Petugas</h3>
+                        <h3>Aksi Cepat</h3>
                     </div>
                     <div class="card-body">
-                        <p>Gunakan menu di samping untuk melakukan transaksi perpustakaan:</p>
-                        <ul class="feature-list">
-                            <li><strong>Peminjaman:</strong> Proses peminjaman buku untuk user yang datang langsung</li>
-                            <li><strong>Pengembalian:</strong> Terima pengembalian buku dan hitung denda jika ada</li>
-                            <li><strong>Denda:</strong> Kelola pembayaran denda</li>
-                            <li><strong>Laporan:</strong> Lihat riwayat transaksi dan statistik</li>
-                        </ul>
+                        <p>Pilih tindakan yang ingin Anda lakukan:</p>
+                        <div class="quick-actions">
+                            <a href="/karyawan/peminjaman" class="action-card">
+                                <div class="action-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <h4>Proses Peminjaman</h4>
+                                <p>Pinjamkan buku untuk user</p>
+                            </a>
+                            
+                            <a href="/karyawan/pengembalian" class="action-card">
+                                <div class="action-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <polyline points="9 15 12 18 15 15"></polyline>
+                                        <line x1="12" y1="12" x2="12" y2="18"></line>
+                                    </svg>
+                                </div>
+                                <h4>Proses Pengembalian</h4>
+                                <p>Terima buku yang dikembalikan</p>
+                            </a>
+                            
+                            <a href="/karyawan/denda" class="action-card">
+                                <div class="action-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                </div>
+                                <h4>Kelola Denda</h4>
+                                <p>Proses pembayaran denda</p>
+                            </a>
+                            
+                            <a href="/karyawan/laporan" class="action-card">
+                                <div class="action-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                                    </svg>
+                                </div>
+                                <h4>Lihat Laporan</h4>
+                                <p>Statistik dan riwayat transaksi</p>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
