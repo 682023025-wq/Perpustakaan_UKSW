@@ -1,0 +1,79 @@
+/* Peminjaman styles */
+
+.form-peminjaman {
+    max-width: 600px;
+}
+
+#peminjaman-form .form-group {
+    margin-bottom: 25px;
+}
+
+#peminjaman-form label {
+    font-weight: 600;
+    color: var(--primary-red);
+}
+
+#peminjaman-form .form-control {
+    border-color: var(--gray-300);
+    transition: all 0.3s ease;
+}
+
+#peminjaman-form .form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+}
+
+.peminjaman-info {
+    background: var(--primary-red-light);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-red);
+}
+
+.peminjaman-info h4 {
+    color: var(--primary-red-dark);
+    margin-bottom: 10px;
+}
+
+.peminjaman-info ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.peminjaman-info li {
+    padding: 5px 0;
+    color: var(--gray-800);
+}
+
+.peminjaman-info li:before {
+    content: "✓ ";
+    color: var(--primary-red);
+    font-weight: bold;
+}
+
+#peminjaman-table {
+    width: 100%;
+}
+
+#peminjaman-table th {
+    white-space: nowrap;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-dipinjam {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.status-tersedia {
+    background: #e8f5e9;
+    color: #2e7d32;
+}

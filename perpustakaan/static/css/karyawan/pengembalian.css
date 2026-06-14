@@ -1,0 +1,64 @@
+/* Pengembalian styles */
+
+.form-pengembalian {
+    max-width: 600px;
+}
+
+#pengembalian-form .form-group {
+    margin-bottom: 25px;
+}
+
+#pengembalian-form label {
+    font-weight: 600;
+    color: var(--primary-red);
+}
+
+#pengembalian-form .form-control {
+    border-color: var(--gray-300);
+    transition: all 0.3s ease;
+}
+
+#pengembalian-form .form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+}
+
+.pengembalian-info {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2e7d32;
+}
+
+.pengembalian-info h4 {
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.denda-warning {
+    background: #fff3e0;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #ef6c00;
+}
+
+.denda-warning h4 {
+    color: #ef6c00;
+    margin-bottom: 10px;
+}
+
+.denda-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-red-dark);
+}
+
+#pengembalian-table {
+    width: 100%;
+}
+
+#pengembalian-table th {
+    white-space: nowrap;
+}

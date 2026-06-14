@@ -1,0 +1,89 @@
+/* Rak styles */
+
+.rak-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.rak-header h3 {
+    color: var(--primary-red);
+}
+
+.btn-add-rak {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-red) 100%);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-add-rak:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.rak-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.rak-card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+    border-left: 4px solid var(--primary-red);
+}
+
+.rak-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.rak-card h4 {
+    color: var(--primary-red);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.rak-card .rak-id {
+    display: inline-block;
+    background: var(--primary-red-light);
+    color: var(--primary-red-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.rak-card p {
+    color: var(--gray-700);
+    margin: 8px 0;
+}
+
+.rak-card .lokasi {
+    font-style: italic;
+    color: var(--gray-800);
+}
+
+.rak-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+#rak-table {
+    width: 100%;
+}
+
+#rak-table th {
+    white-space: nowrap;
+}
