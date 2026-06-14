@@ -4,73 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Rak - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/admin/rak.css">
 </head>
-<body class="desktop-layout">
-    <nav class="navbar">
-        <div class="navbar-brand">📚 Admin Perpustakaan</div>
-        <ul class="navbar-nav">
-            <li><span id="nav-user-name">Halo, Admin</span></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-
-    <div class="main-content">
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
-                <li><a href="/admin/users">👥 Manajemen User</a></li>
-                <li><a href="/admin/katalog">📖 Katalog Buku</a></li>
-                <li><a href="/admin/kategori">🏷️ Kategori</a></li>
-                <li><a href="/admin/rak" class="active">📚 Rak Buku</a></li>
-            </ul>
+            <div class="sidebar-header">
+                <h1 class="logo">PERPUSTAKAAN</h1>
+                <p class="subtitle">Admin Portal</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/admin/dashboard" class="nav-link">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link">
+                            <span class="nav-text">Manajemen User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/katalog" class="nav-link">
+                            <span class="nav-text">Katalog Buku</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/kategori" class="nav-link">
+                            <span class="nav-text">Kategori</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/admin/rak" class="nav-link">
+                            <span class="nav-text">Rak Buku</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ session.get('nama_lengkap', 'A')[0].upper() }}</div>
+                    <div class="user-details">
+                        <p class="user-name">{{ session.get('nama_lengkap') }}</p>
+                        <p class="user-role">Administrator</p>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
         </aside>
 
-        <main class="content-area">
-            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Manajemen Rak Buku</h1>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Manajemen Rak Buku</h2>
+                    <p>Kelola data lokasi dan penempatan rak buku</p>
+                </div>
+            </header>
 
-            <!-- Form Tambah/Edit Rak -->
-            <div class="card">
-                <div class="card-header" id="form-title">Tambah Rak Baru</div>
-                <form id="rak-form" class="form-inline">
-                    <input type="hidden" id="edit-mode" value="false">
-                    <div class="form-group">
-                        <label for="id_rak">ID Rak</label>
-                        <input type="text" id="id_rak" required placeholder="Contoh: R-01">
+            <div class="content-wrapper">
+                <!-- Form Tambah/Edit Rak -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 id="form-title">Tambah Rak Baru</h3>
                     </div>
-                    <div class="form-group">
-                        <label for="nama_rak">Nama Rak</label>
-                        <input type="text" id="nama_rak" required placeholder="Contoh: Rak FTI Teo">
-                    </div>
-                    <div class="form-group">
-                        <label for="lokasi_detail">Lokasi Detail</label>
-                        <input type="text" id="lokasi_detail" required placeholder="Contoh: Lantai 2, Sayap Kanan">
-                    </div>
-                    <div class="form-group form-buttons">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
-                    </div>
-                </form>
-            </div>
+                    <div class="card-body">
+                        <form id="rak-form" class="form-grid">
+                            <input type="hidden" id="edit-mode" value="false">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="id_rak">ID Rak <span class="required">*</span></label>
+                                    <input type="text" id="id_rak" required placeholder="Contoh: R-01">
+                                    <small class="form-hint">Gunakan format kode unik (misal: R-01, R-02)</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="nama_rak">Nama Rak <span class="required">*</span></label>
+                                    <input type="text" id="nama_rak" required placeholder="Contoh: Rak FTI Teo">
+                                </div>
+                            </div>
 
-            <!-- Tabel Data Rak -->
-            <div class="card">
-                <div class="card-header">Daftar Rak</div>
-                <div class="table-responsive">
-                    <table id="rak-table">
-                        <thead>
-                            <tr>
-                                <th>ID Rak</th>
-                                <th>Nama Rak</th>
-                                <th>Lokasi Detail</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rak-tbody">
-                            <!-- Data will be loaded here -->
-                        </tbody>
-                    </table>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="lokasi_detail">Lokasi Detail <span class="required">*</span></label>
+                                    <input type="text" id="lokasi_detail" required placeholder="Contoh: Lantai 2, Sayap Kanan, Lemari A">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Simpan Data</button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabel Data Rak -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Daftar Rak</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <input type="text" id="search-input" placeholder="Cari nama rak atau lokasi..." onkeyup="searchRak()">
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table id="rak-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 150px;">ID Rak</th>
+                                        <th>Nama Rak</th>
+                                        <th>Lokasi Detail</th>
+                                        <th style="width: 150px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rak-tbody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
