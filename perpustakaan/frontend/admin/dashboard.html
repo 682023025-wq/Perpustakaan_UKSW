@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Sistem Informasi Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/admin/dashboard.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            📚 Sistem Informasi Perpustakaan
+        </div>
+        <div class="navbar-user">
+            <div class="user-info">
+                <div class="nama" id="userName">Admin</div>
+                <div class="role">Administrator</div>
+            </div>
+            <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="/admin/dashboard.html" class="active">📊 Dashboard</a></li>
+            <li><a href="/admin/users.html">👥 Manajemen User</a></li>
+            <li><a href="/admin/katalog.html">📚 Katalog Buku</a></li>
+            <li><a href="/admin/kategori.html">🏷️ Kategori</a></li>
+            <li><a href="/admin/rak.html">🗄️ Rak Buku</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="dashboard-header">
+            <h1>Dashboard Admin</h1>
+            <p>Selamat datang di panel administrasi perpustakaan</p>
+        </div>
+
+        <div id="alertBox"></div>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div>
+                <h2>Selamat Datang, <span id="welcomeName">Admin</span>!</h2>
+                <p>Berikut adalah ringkasan aktivitas perpustakaan hari ini.</p>
+            </div>
+            <div class="welcome-date">
+                <div id="currentDate"></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Total Anggota</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                    <h3 id="totalBuku">0</h3>
+                    <p>Total Buku</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-info">
+                    <h3 id="peminjamanAktif">0</h3>
+                    <p>Peminjaman Aktif</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-info">
+                    <h3 id="dendaBelumLunas">0</h3>
+                    <p>Denda Belum Lunas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Aksi Cepat</h3>
+            </div>
+            <div class="card-body">
+                <div class="quick-actions">
+                    <a href="/admin/users.html" class="quick-action-btn">
+                        <span class="quick-action-icon">➕</span>
+                        <span class="quick-action-text">Tambah User Baru</span>
+                    </a>
+                    <a href="/admin/katalog.html" class="quick-action-btn">
+                        <span class="quick-action-icon">📖</span>
+                        <span class="quick-action-text">Kelola Buku</span>
+                    </a>
+                    <a href="/admin/kategori.html" class="quick-action-btn">
+                        <span class="quick-action-icon">🏷️</span>
+                        <span class="quick-action-text">Kelola Kategori</span>
+                    </a>
+                    <a href="/admin/rak.html" class="quick-action-btn">
+                        <span class="quick-action-icon">🗄️</span>
+                        <span class="quick-action-text">Kelola Rak</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card recent-transactions">
+            <div class="card-header">
+                <h3 class="card-title">Peminjaman Terbaru</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID Pinjam</th>
+                                <th>Peminjam</th>
+                                <th>Judul Buku</th>
+                                <th>Tgl Pinjam</th>
+                                <th>Tgl Kembali</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactionsBody">
+                            <tr>
+                                <td colspan="6" class="text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/admin/dashboard.js"></script>
+</body>
+</html>
