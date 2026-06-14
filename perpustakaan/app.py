@@ -91,17 +91,19 @@ def admin_dashboard_stats():
 @app.route('/api/admin/users', methods=['GET'])
 @admin_required
 def api_get_users():
-    """Get all users"""
-    users = get_all_users()
-    return jsonify(users)
+    """Get all users with optional filters"""
+    role = request.args.get('role')
+    status = request.args.get('status')
+    result = get_all_users(role, status)
+    return jsonify(result)
 
 @app.route('/api/admin/users/<id_user>', methods=['GET'])
 @admin_required
 def api_get_user(id_user):
     """Get user by ID"""
-    user = get_user_by_id(id_user)
-    if user:
-        return jsonify(user)
+    result = get_user_by_id(id_user)
+    if result:
+        return jsonify(result)
     return jsonify({'error': 'User not found'}), 404
 
 @app.route('/api/admin/users', methods=['POST'])
@@ -109,13 +111,7 @@ def api_get_user(id_user):
 def api_create_user():
     """Create new user"""
     data = request.get_json()
-    result = create_user(
-        data.get('username'),
-        data.get('nama'),
-        data.get('email'),
-        data.get('password'),
-        data.get('role', 'MHS')
-    )
+    result = create_user(data)
     return jsonify(result)
 
 @app.route('/api/admin/users/<id_user>', methods=['PUT'])
@@ -123,13 +119,7 @@ def api_create_user():
 def api_update_user(id_user):
     """Update user"""
     data = request.get_json()
-    result = update_user(
-        id_user,
-        data.get('nama'),
-        data.get('email'),
-        data.get('role'),
-        data.get('status')
-    )
+    result = update_user(id_user, data)
     return jsonify(result)
 
 @app.route('/api/admin/users/<id_user>', methods=['DELETE'])
@@ -203,15 +193,24 @@ def api_delete_buku(id_buku):
 @admin_required
 def api_get_kategori():
     """Get all categories"""
-    kategori_list = get_all_kategori()
-    return jsonify(kategori_list)
+    result = get_all_kategori()
+    return jsonify(result)
+
+@app.route('/api/admin/kategori/<id_kategori>', methods=['GET'])
+@admin_required
+def api_get_kategori_by_id(id_kategori):
+    """Get category by ID"""
+    result = get_kategori_by_id(id_kategori)
+    if result:
+        return jsonify(result)
+    return jsonify({'error': 'Category not found'}), 404
 
 @app.route('/api/admin/kategori', methods=['POST'])
 @admin_required
 def api_create_kategori():
     """Create new category"""
     data = request.get_json()
-    result = create_kategori(data.get('nama_kategori'), data.get('deskripsi'))
+    result = create_kategori(data)
     return jsonify(result)
 
 @app.route('/api/admin/kategori/<id_kategori>', methods=['PUT'])
@@ -219,7 +218,7 @@ def api_create_kategori():
 def api_update_kategori(id_kategori):
     """Update category"""
     data = request.get_json()
-    result = update_kategori(id_kategori, data.get('nama_kategori'), data.get('deskripsi'))
+    result = update_kategori(id_kategori, data)
     return jsonify(result)
 
 @app.route('/api/admin/kategori/<id_kategori>', methods=['DELETE'])
@@ -233,15 +232,24 @@ def api_delete_kategori(id_kategori):
 @admin_required
 def api_get_rak():
     """Get all racks"""
-    rak_list = get_all_rak()
-    return jsonify(rak_list)
+    result = get_all_rak()
+    return jsonify(result)
+
+@app.route('/api/admin/rak/<id_rak>', methods=['GET'])
+@admin_required
+def api_get_rak_by_id(id_rak):
+    """Get rack by ID"""
+    result = get_rak_by_id(id_rak)
+    if result:
+        return jsonify(result)
+    return jsonify({'error': 'Rack not found'}), 404
 
 @app.route('/api/admin/rak', methods=['POST'])
 @admin_required
 def api_create_rak():
     """Create new rack"""
     data = request.get_json()
-    result = create_rak(data.get('kode_rak'), data.get('lokasi'), data.get('kapasitas', 50))
+    result = create_rak(data)
     return jsonify(result)
 
 @app.route('/api/admin/rak/<id_rak>', methods=['PUT'])
@@ -249,7 +257,7 @@ def api_create_rak():
 def api_update_rak(id_rak):
     """Update rack"""
     data = request.get_json()
-    result = update_rak(id_rak, data.get('kode_rak'), data.get('lokasi'), data.get('kapasitas'))
+    result = update_rak(id_rak, data)
     return jsonify(result)
 
 @app.route('/api/admin/rak/<id_rak>', methods=['DELETE'])

@@ -14,10 +14,10 @@ def get_all_kategori():
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT k.*, COUNT(b.id_buku) as jumlah_buku
-        FROM KATEGORI k
-        LEFT JOIN BUKU b ON k.id_kategori = b.id_kategori
-        GROUP BY k.id_kategori
+        SELECT k.id_kategori, k.nama_kategori, COUNT(kb.isbn) as jumlah_buku
+        FROM KATEGORI_BUKU k
+        LEFT JOIN KATALOG_BUKU kb ON k.id_kategori = kb.id_kategori
+        GROUP BY k.id_kategori, k.nama_kategori
         ORDER BY k.nama_kategori ASC
     """)
     
@@ -25,7 +25,7 @@ def get_all_kategori():
     cursor.close()
     conn.close()
     
-    return kategori_list
+    return {'kategori': kategori_list}
 
 def get_kategori_by_id(id_kategori):
     """Mengambil detail kategori berdasarkan ID"""
@@ -33,57 +33,56 @@ def get_kategori_by_id(id_kategori):
     cursor = conn.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT k.*, COUNT(b.id_buku) as jumlah_buku
-        FROM KATEGORI k
-        LEFT JOIN BUKU b ON k.id_kategori = b.id_kategori
+        SELECT k.id_kategori, k.nama_kategori, COUNT(kb.isbn) as jumlah_buku
+        FROM KATEGORI_BUKU k
+        LEFT JOIN KATALOG_BUKU kb ON k.id_kategori = kb.id_kategori
         WHERE k.id_kategori = %s
-        GROUP BY k.id_kategori
+        GROUP BY k.id_kategori, k.nama_kategori
     """, (id_kategori,))
     
     kategori = cursor.fetchone()
     cursor.close()
     conn.close()
     
-    return kategori
+    return {'kategori': kategori} if kategori else None
 
-def create_kategori(nama_kategori, deskripsi=None):
+def create_kategori(data):
     """Membuat kategori baru"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     query = """
-        INSERT INTO KATEGORI (nama_kategori, deskripsi)
+        INSERT INTO KATEGORI_BUKU (id_kategori, nama_kategori)
         VALUES (%s, %s)
     """
     
     try:
-        cursor.execute(query, (nama_kategori, deskripsi))
+        cursor.execute(query, (data.get('id_kategori'), data.get('nama_kategori')))
         conn.commit()
-        id_kategori = cursor.lastrowid
-        return {'success': True, 'message': 'Kategori berhasil dibuat', 'id_kategori': id_kategori}
+        return {'success': True, 'message': 'Kategori berhasil dibuat'}
     except mysql.connector.Error as err:
-        return {'success': False, 'message': f'Error: {str(err)}'}
+        return {'success': False, 'error': str(err)}
     finally:
         cursor.close()
         conn.close()
 
-def update_kategori(id_kategori, nama_kategori, deskripsi=None):
+def update_kategori(id_kategori, data):
     """Update data kategori"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     query = """
-        UPDATE KATEGORI 
-        SET nama_kategori = %s, deskripsi = %s
+        UPDATE KATEGORI_BUKU 
+        SET nama_kategori = %s
         WHERE id_kategori = %s
     """
     
     try:
-        cursor.execute(query, (nama_kategori, deskripsi, id_kategori))
+        cursor.execute(query, (data.get('nama_kategori'), id_kategori))
         conn.commit()
         return {'success': True, 'message': 'Kategori berhasil diupdate'}
     except mysql.connector.Error as err:
-        return {'success': False, 'message': f'Error: {str(err)}'}
+        return {'success': False, 'error': str(err)}
     finally:
         cursor.close()
         conn.close()
@@ -94,11 +93,11 @@ def delete_kategori(id_kategori):
     cursor = conn.cursor()
     
     try:
-        cursor.execute("DELETE FROM KATEGORI WHERE id_kategori = %s", (id_kategori,))
+        cursor.execute("DELETE FROM KATEGORI_BUKU WHERE id_kategori = %s", (id_kategori,))
         conn.commit()
         return {'success': True, 'message': 'Kategori berhasil dihapus'}
     except mysql.connector.Error as err:
-        return {'success': False, 'message': f'Error: {str(err)}'}
+        return {'success': False, 'error': str(err)}
     finally:
         cursor.close()
         conn.close()
