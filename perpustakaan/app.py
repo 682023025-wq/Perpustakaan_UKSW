@@ -9,7 +9,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import DB_CONFIG, APP_CONFIG, get_db_connection
 from backend.auth import login_required, check_role
 
-app = Flask(__name__)
+# Dapatkan path dasar aplikasi
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(__name__, 
+            template_folder=os.path.join(base_dir, 'frontend'),
+            static_folder=os.path.join(base_dir, 'static'))
 app.secret_key = APP_CONFIG['SECRET_KEY']
 app.config['UPLOAD_FOLDER'] = APP_CONFIG['UPLOAD_FOLDER']
 app.config['MAX_CONTENT_LENGTH'] = APP_CONFIG['MAX_CONTENT_LENGTH']
