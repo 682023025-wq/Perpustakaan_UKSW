@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Petugas - Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/karyawan/dashboard.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="main-content">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/karyawan/dashboard" class="active">📊 Dashboard</a></li>
+                <li><a href="/karyawan/peminjaman">📤 Peminjaman</a></li>
+                <li><a href="/karyawan/pengembalian">📥 Pengembalian</a></li>
+                <li><a href="/karyawan/denda">💰 Denda</a></li>
+                <li><a href="/karyawan/laporan">📋 Laporan</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Dashboard Petugas</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>{{ stats.sedang_dipinjam }}</h3>
+                    <p>Sedang Dipinjam</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ stats.terlambat }}</h3>
+                    <p>Terlambat Kembali</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ stats.denda_belum_lunas }}</h3>
+                    <p>Denda Belum Lunas</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ stats.buku_tersedia }}</h3>
+                    <p>Buku Tersedia</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Selamat Datang di Panel Petugas</div>
+                <p>Gunakan menu di samping untuk melakukan transaksi perpustakaan:</p>
+                <ul style="margin-top: 15px; padding-left: 20px;">
+                    <li><strong>Peminjaman:</strong> Proses peminjaman buku untuk user yang datang langsung</li>
+                    <li><strong>Pengembalian:</strong> Terima pengembalian buku dan hitung denda jika ada</li>
+                    <li><strong>Denda:</strong> Kelola pembayaran denda</li>
+                    <li><strong>Laporan:</strong> Lihat riwayat transaksi dan statistik</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/karyawan/dashboard.js"></script>
+</body>
+</html>
