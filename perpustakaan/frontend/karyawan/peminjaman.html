@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peminjaman - Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/karyawan/peminjaman.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="main-content">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/karyawan/dashboard">📊 Dashboard</a></li>
+                <li><a href="/karyawan/peminjaman" class="active">📤 Peminjaman</a></li>
+                <li><a href="/karyawan/pengembalian">📥 Pengembalian</a></li>
+                <li><a href="/karyawan/denda">💰 Denda</a></li>
+                <li><a href="/karyawan/laporan">📋 Laporan</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Peminjaman Buku</h1>
+            
+            <div class="card">
+                <div class="card-header">Form Peminjaman</div>
+                <div id="alert-container"></div>
+                
+                <form id="peminjaman-form">
+                    <div class="form-group">
+                        <label for="id_peminjam">ID Peminjam (User ID)</label>
+                        <input type="text" id="id_peminjam" class="form-control" required placeholder="Contoh: USR-MHS01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_barcode">Barcode Buku</label>
+                        <input type="text" id="id_barcode" class="form-control" required placeholder="Contoh: BC-ORC-001">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Proses Peminjaman</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Daftar Peminjaman Aktif</div>
+                <div class="table-responsive">
+                    <table id="peminjaman-table">
+                        <thead>
+                            <tr>
+                                <th>ID Pinjam</th>
+                                <th>Peminjam</th>
+                                <th>Judul Buku</th>
+                                <th>Tgl Pinjam</th>
+                                <th>Jatuh Tempo</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/karyawan/peminjaman.js"></script>
+</body>
+</html>

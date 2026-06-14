@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/karyawan/laporan.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Petugas Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span>Halo, {{ session.get('nama_lengkap') }}</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="main-content">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/karyawan/dashboard">📊 Dashboard</a></li>
+                <li><a href="/karyawan/peminjaman">📤 Peminjaman</a></li>
+                <li><a href="/karyawan/pengembalian">📥 Pengembalian</a></li>
+                <li><a href="/karyawan/denda">💰 Denda</a></li>
+                <li><a href="/karyawan/laporan" class="active">📋 Laporan</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Laporan Transaksi</h1>
+            
+            <div class="card">
+                <div class="card-header">Riwayat Peminjaman</div>
+                <div class="table-responsive">
+                    <table id="laporan-table">
+                        <thead>
+                            <tr>
+                                <th>ID Pinjam</th>
+                                <th>Peminjam</th>
+                                <th>Judul Buku</th>
+                                <th>Tgl Pinjam</th>
+                                <th>Tgl Kembali</th>
+                                <th>Status</th>
+                                <th>Petugas</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/karyawan/laporan.js"></script>
+</body>
+</html>
