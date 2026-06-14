@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Buku - Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/admin/katalog.css">
+</head>
+<body class="desktop-layout">
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Admin Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span id="nav-user-name">Halo, Admin</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
+                <li><a href="/admin/users">👥 Manajemen User</a></li>
+                <li><a href="/admin/katalog" class="active">📖 Katalog Buku</a></li>
+                <li><a href="/admin/kategori">🏷️ Kategori</a></li>
+                <li><a href="/admin/rak">📚 Rak Buku</a></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Katalog Buku</h1>
+
+            <!-- Form Tambah/Edit Buku -->
+            <div class="card">
+                <div class="card-header" id="form-title">Tambah Buku Baru</div>
+                <form id="buku-form" class="form-grid">
+                    <input type="hidden" id="edit-mode" value="false">
+                    <div class="form-group">
+                        <label for="isbn">ISBN</label>
+                        <input type="text" id="isbn" required placeholder="Contoh: 978-602-02-1111">
+                    </div>
+                    <div class="form-group">
+                        <label for="judul">Judul Buku</label>
+                        <input type="text" id="judul" required placeholder="Judul buku">
+                    </div>
+                    <div class="form-group">
+                        <label for="pengarang">Pengarang</label>
+                        <input type="text" id="pengarang" required placeholder="Nama pengarang">
+                    </div>
+                    <div class="form-group">
+                        <label for="penerbit">Penerbit</label>
+                        <input type="text" id="penerbit" required placeholder="Nama penerbit">
+                    </div>
+                    <div class="form-group">
+                        <label for="tahun_terbit">Tahun Terbit</label>
+                        <input type="number" id="tahun_terbit" required placeholder="2024" min="1900" max="2100">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_kategori">Kategori</label>
+                        <select id="id_kategori" required>
+                            <option value="">Pilih Kategori</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bahasa">Bahasa</label>
+                        <input type="text" id="bahasa" required placeholder="Indonesia/Inggris dll">
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlah_halaman">Jumlah Halaman</label>
+                        <input type="number" id="jumlah_halaman" required placeholder="100" min="1">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="sinopsis">Sinopsis</label>
+                        <textarea id="sinopsis" rows="4" placeholder="Deskripsi buku"></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Data Buku -->
+            <div class="card">
+                <div class="card-header">Daftar Buku</div>
+                <div class="table-controls">
+                    <input type="text" id="search-input" placeholder="Cari buku..." onkeyup="searchBuku()">
+                    <select id="filter-kategori" onchange="filterBuku()">
+                        <option value="">Semua Kategori</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table id="buku-table">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Judul</th>
+                                <th>Pengarang</th>
+                                <th>Penerbit</th>
+                                <th>Tahun</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buku-tbody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/admin/katalog.js"></script>
+</body>
+</html>
