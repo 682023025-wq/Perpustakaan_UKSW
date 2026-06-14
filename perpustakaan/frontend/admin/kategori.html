@@ -4,19 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kategori Buku - Perpustakaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/kategori.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        thead { background-color: #f8f9fa; border-bottom: 2px solid #eee; }
+        th {
+            text-align: left; padding: 16px 24px; font-weight: 600;
+            color: #555; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        td {
+            padding: 16px 24px; border-bottom: 1px solid #f0f0f0;
+            color: #333; font-size: 0.95rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #fafafa; }
+        
+        .action-btn {
+            background: none; border: none; cursor: pointer;
+            padding: 6px; border-radius: 6px; transition: all 0.2s;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .action-btn.edit { color: #1976d2; }
+        .action-btn.edit:hover { background-color: #e3f2fd; }
+        .action-btn.delete { color: #d32f2f; }
+        .action-btn.delete:hover { background-color: #ffebee; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; padding: 32px; border-radius: 16px;
+            width: 100%; max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; margin-bottom: 8px;
+            font-weight: 500; color: #444; font-size: 0.9rem;
+        }
+        .form-control {
+            width: 100%; padding: 12px 16px;
+            border: 1px solid #ddd; border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            transition: border-color 0.2s; box-sizing: border-box;
+        }
+        .form-control:focus {
+            outline: none; border-color: #E53935;
+            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #E53935 0%, #c62828 100%);
+            color: white; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer;
+            width: 100%; font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+        }
+        
+        .header-actions {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 24px;
+        }
+        .search-box { position: relative; width: 300px; }
+        .search-box input {
+            width: 100%; padding: 10px 16px 10px 40px;
+            border: 1px solid #ddd; border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        .search-icon {
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%); color: #999;
+            width: 18px; height: 18px;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2 class="logo-text">PERPUSTAKAAN</h2>
+                <div class="logo-text">PERPUSTAKAAN</div>
+                <div class="logo-subtext">Admin Panel</div>
             </div>
+            
             <nav class="sidebar-nav">
-                <a href="{{ url_for('admin_dashboard') }}" class="nav-item">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7"></rect>
                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -25,7 +122,7 @@
                     </svg>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ url_for('admin_users') }}" class="nav-item">
+                <a href="{{ url_for('admin.users') }}" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
@@ -34,30 +131,29 @@
                     </svg>
                     <span>Pengguna</span>
                 </a>
-                <a href="{{ url_for('admin_katalog') }}" class="nav-item">
+                <a href="{{ url_for('admin.katalog') }}" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                     <span>Katalog Buku</span>
                 </a>
-                <a href="{{ url_for('admin_kategori') }}" class="nav-item active">
+                <a href="{{ url_for('admin.kategori') }}" class="nav-item active">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                     </svg>
                     <span>Kategori</span>
                 </a>
-                <a href="{{ url_for('admin_rak') }}" class="nav-item">
+                <a href="{{ url_for('admin.rak') }}" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/>
+                        <path d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"></path>
                     </svg>
                     <span>Rak Buku</span>
                 </a>
-                <a href="{{ url_for('logout') }}" class="nav-item nav-logout">
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="nav-item logout">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
@@ -65,22 +161,24 @@
                     </svg>
                     <span>Keluar</span>
                 </a>
-            </nav>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="top-bar">
-                <h1 class="page-title">Kategori Buku</h1>
+            <header class="top-header">
+                <h1 class="page-title">Manajemen Kategori</h1>
                 <div class="user-profile">
-                    <span class="user-name">Admin</span>
+                    <div class="user-info">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
                     <div class="user-avatar">A</div>
                 </div>
             </header>
 
-            <div class="content-wrapper">
-                <!-- Action Bar -->
-                <div class="action-bar">
+            <div class="content-body">
+                <div class="header-actions">
                     <div class="search-box">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
@@ -88,31 +186,26 @@
                         </svg>
                         <input type="text" id="searchInput" placeholder="Cari kategori...">
                     </div>
-                    <button class="btn-primary" onclick="openModal()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Tambah Kategori
+                    <button class="btn-primary" style="width: auto;" onclick="openModal()">
+                        + Tambah Kategori
                     </button>
                 </div>
 
-                <!-- Data Table -->
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID Kategori</th>
-                                    <th>Nama Kategori</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="kategoriTableBody">
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kategoriTableBody">
+                            <tr>
+                                <td colspan="3" style="text-align:center; padding: 40px;">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
@@ -121,22 +214,15 @@
     <!-- Modal Form -->
     <div id="kategoriModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Tambah Kategori</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
+            <h2 style="margin-bottom: 24px; font-size: 1.5rem; color: #333;" id="modalTitle">Tambah Kategori</h2>
             <form id="kategoriForm">
-                <input type="hidden" id="editId">
+                <input type="hidden" id="kategoriId">
                 <div class="form-group">
-                    <label for="idKategori">ID Kategori</label>
-                    <input type="number" id="idKategori" required>
+                    <label for="nama_kategori">Nama Kategori</label>
+                    <input type="text" id="nama_kategori" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label for="namaKategori">Nama Kategori</label>
-                    <input type="text" id="namaKategori" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn-primary" style="background: #ccc; color: #333;" onclick="closeModal()">Batal</button>
                     <button type="submit" class="btn-primary">Simpan</button>
                 </div>
             </form>
