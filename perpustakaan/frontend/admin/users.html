@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Users - Perpustakaan</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/admin/users.css">
+</head>
+<body class="desktop-layout">
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Admin Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span id="nav-user-name">Halo, Admin</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
+                <li><a href="/admin/users" class="active">👥 Manajemen User</a></li>
+                <li><a href="/admin/katalog">📖 Katalog Buku</a></li>
+                <li><a href="/admin/kategori">🏷️ Kategori</a></li>
+                <li><a href="/admin/rak">📚 Rak Buku</a></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Manajemen Users</h1>
+
+            <!-- Form Tambah/Edit User -->
+            <div class="card">
+                <div class="card-header" id="form-title">Tambah User Baru</div>
+                <form id="user-form" class="form-grid">
+                    <input type="hidden" id="edit-mode" value="false">
+                    <div class="form-group">
+                        <label for="id_user">ID User</label>
+                        <input type="text" id="id_user" required placeholder="Contoh: USR-MHS001">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required placeholder="Username login">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="Minimal 6 karakter">
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_lengkap">Nama Lengkap</label>
+                        <input type="text" id="nama_lengkap" required placeholder="Nama lengkap user">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="no_telepon">No. Telepon</label>
+                        <input type="text" id="no_telepon" required placeholder="08xxxxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_role">Role</label>
+                        <select id="id_role" required>
+                            <option value="">Pilih Role</option>
+                            <option value="SPRADM">Super Admin</option>
+                            <option value="PTGS">Petugas Biasa</option>
+                            <option value="DSN">Dosen</option>
+                            <option value="MHS">Mahasiswa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="program_studi">Program Studi</label>
+                        <input type="text" id="program_studi" placeholder="Kosongkan jika petugas/admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="fakultas">Fakultas</label>
+                        <input type="text" id="fakultas" placeholder="Kosongkan jika petugas/admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="status_aktif">Status Aktif</label>
+                        <select id="status_aktif">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Data Users -->
+            <div class="card">
+                <div class="card-header">Daftar Users</div>
+                <div class="table-controls">
+                    <input type="text" id="search-input" placeholder="Cari user..." onkeyup="searchUser()">
+                    <select id="filter-role" onchange="filterUsers()">
+                        <option value="">Semua Role</option>
+                        <option value="SPRADM">Super Admin</option>
+                        <option value="PTGS">Petugas Biasa</option>
+                        <option value="DSN">Dosen</option>
+                        <option value="MHS">Mahasiswa</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID User</th>
+                                <th>Username</th>
+                                <th>Nama Lengkap</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/admin/users.js"></script>
+</body>
+</html>
