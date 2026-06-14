@@ -4,46 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem Perpustakaan</title>
-    <link rel="stylesheet" href="/static/css/global.css">
-    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
     <div class="login-container">
-        <div class="login-box">
-            <div class="login-header">
-                <h1>📚 Perpustakaan Digital</h1>
-                <p>Silakan login untuk melanjutkan</p>
+        <!-- Panel Kiri: Visual & Branding -->
+        <div class="login-branding">
+            <div class="branding-content">
+                <div class="logo-placeholder">
+                    <div class="book-icon"></div>
+                </div>
+                <h1>Perpustakaan Digital</h1>
+                <p>Sistem Manajemen Terpadu<br>UKSW Library System</p>
+                <div class="decoration-line"></div>
+                <p class="copyright">&copy; 2026 Universitas Kristen Satya Wacana</p>
             </div>
-            
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ 'error' if category == 'error' else category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            
-            <form class="login-form" method="POST" action="/login">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" class="form-control" required placeholder="Masukkan username">
+        </div>
+
+        <!-- Panel Kanan: Form Login -->
+        <div class="login-form-wrapper">
+            <div class="login-box">
+                <div class="form-header">
+                    <h2>Selamat Datang</h2>
+                    <p>Silakan masuk dengan kredensial Anda</p>
                 </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="error-message">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form id="loginForm" class="login-form" method="POST" action="/login">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <div class="input-field">
+                            <input type="text" id="username" name="username" placeholder="Masukkan username" required autocomplete="off">
+                            <div class="input-border"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-field">
+                            <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                            <div class="input-border"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="remember">
+                            <span class="checkmark"></span>
+                            Ingat saya
+                        </label>
+                        <a href="#" class="forgot-password">Lupa password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        <span>Masuk Sekarang</span>
+                        <div class="btn-arrow"></div>
+                    </button>
+                </form>
                 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required placeholder="Masukkan password">
+                <div class="form-footer">
+                    <p>Butuh bantuan? Hubungi administrator.</p>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            
-            <div class="login-footer">
-                <p>&copy; 2024 Sistem Informasi Perpustakaan</p>
             </div>
         </div>
     </div>
-    
-    <script src="/static/js/global.js"></script>
-    <script src="/static/js/login.js"></script>
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
 </html>
