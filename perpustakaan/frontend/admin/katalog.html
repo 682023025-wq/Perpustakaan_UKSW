@@ -4,261 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalog Buku - Perpustakaan</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
-    <style>
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        .form-group { margin-bottom: 0; }
-        .form-group label {
-            display: block; margin-bottom: 8px;
-            font-weight: 500; color: #444; font-size: 0.9rem;
-        }
-        .form-control {
-            width: 100%; padding: 12px 16px;
-            border: 1px solid #ddd; border-radius: 8px;
-            font-family: 'Inter', sans-serif; font-size: 0.95rem;
-            transition: border-color 0.2s; box-sizing: border-box;
-        }
-        .form-control:focus {
-            outline: none; border-color: #E53935;
-            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
-        }
-        textarea.form-control { resize: vertical; min-height: 100px; }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #E53935 0%, #c62828 100%);
-            color: white; border: none; padding: 12px 24px;
-            border-radius: 8px; font-weight: 600; cursor: pointer;
-            font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-        }
-        .btn-secondary {
-            background: #f5f5f5; color: #333; border: none;
-            padding: 12px 24px; border-radius: 8px;
-            font-weight: 600; cursor: pointer; font-size: 1rem;
-        }
-        .btn-secondary:hover { background: #e0e0e0; }
-        
-        .table-container {
-            background: white; border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            overflow: hidden; margin-top: 24px;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        thead { background-color: #f8f9fa; border-bottom: 2px solid #eee; }
-        th {
-            text-align: left; padding: 16px 24px; font-weight: 600;
-            color: #555; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        td {
-            padding: 16px 24px; border-bottom: 1px solid #f0f0f0;
-            color: #333; font-size: 0.95rem;
-        }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: #fafafa; }
-        
-        .action-btn {
-            background: none; border: none; cursor: pointer;
-            padding: 6px; border-radius: 6px; transition: all 0.2s;
-            display: inline-flex; align-items: center; justify-content: center;
-        }
-        .action-btn.edit { color: #1976d2; }
-        .action-btn.edit:hover { background-color: #e3f2fd; }
-        .action-btn.delete { color: #d32f2f; }
-        .action-btn.delete:hover { background-color: #ffebee; }
-        
-        .table-controls {
-            display: flex; gap: 16px; margin-bottom: 20px; padding: 0 24px;
-        }
-        .table-controls input, .table-controls select {
-            padding: 10px 16px; border: 1px solid #ddd;
-            border-radius: 8px; font-family: 'Inter', sans-serif;
-        }
-        .table-controls input { flex: 1; }
-        
-        .card-section {
-            background: white; border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            padding: 24px; margin-bottom: 24px;
-        }
-        .card-header {
-            font-size: 1.25rem; font-weight: 600; color: #333;
-            margin-bottom: 20px; padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/admin/katalog.css">
 </head>
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
+<body class="desktop-layout">
+    <nav class="navbar">
+        <div class="navbar-brand">📚 Admin Perpustakaan</div>
+        <ul class="navbar-nav">
+            <li><span id="nav-user-name">Halo, Admin</span></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-text">PERPUSTAKAAN</div>
-                <div class="logo-subtext">Admin Panel</div>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ url_for('admin.users') }}" class="nav-item">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <span>Pengguna</span>
-                </a>
-                <a href="{{ url_for('admin.katalog') }}" class="nav-item active">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <span>Katalog Buku</span>
-                </a>
-                <a href="{{ url_for('admin.kategori') }}" class="nav-item">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span>Kategori</span>
-                </a>
-                <a href="{{ url_for('admin.rak') }}" class="nav-item">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"></path>
-                    </svg>
-                    <span>Rak Buku</span>
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <a href="{{ url_for('logout') }}" class="nav-item logout">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span>Keluar</span>
-                </a>
-            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
+                <li><a href="/admin/users">👥 Manajemen User</a></li>
+                <li><a href="/admin/katalog" class="active">📖 Katalog Buku</a></li>
+                <li><a href="/admin/kategori">🏷️ Kategori</a></li>
+                <li><a href="/admin/rak">📚 Rak Buku</a></li>
+            </ul>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-header">
-                <h1 class="page-title">Katalog Buku</h1>
-                <div class="user-profile">
-                    <div class="user-info">
-                        <span class="user-name">Admin</span>
-                        <span class="user-role">Super Admin</span>
+        <main class="content-area">
+            <h1 style="color: var(--primary-red); margin-bottom: 30px;">Katalog Buku</h1>
+
+            <!-- Form Tambah/Edit Buku -->
+            <div class="card">
+                <div class="card-header" id="form-title">Tambah Buku Baru</div>
+                <form id="buku-form" class="form-grid">
+                    <input type="hidden" id="edit-mode" value="false">
+                    <div class="form-group">
+                        <label for="isbn">ISBN</label>
+                        <input type="text" id="isbn" required placeholder="Contoh: 978-602-02-1111">
                     </div>
-                    <div class="user-avatar">A</div>
-                </div>
-            </header>
-
-            <div class="content-body">
-                <!-- Form Section -->
-                <div class="card-section">
-                    <div class="card-header" id="form-title">Tambah Buku Baru</div>
-                    <form id="buku-form" class="form-grid">
-                        <input type="hidden" id="edit-mode" value="false">
-                        <div class="form-group">
-                            <label for="isbn">ISBN</label>
-                            <input type="text" id="isbn" class="form-control" required placeholder="Contoh: 978-602-02-1111">
-                        </div>
-                        <div class="form-group">
-                            <label for="judul">Judul Buku</label>
-                            <input type="text" id="judul" class="form-control" required placeholder="Judul buku">
-                        </div>
-                        <div class="form-group">
-                            <label for="pengarang">Pengarang</label>
-                            <input type="text" id="pengarang" class="form-control" required placeholder="Nama pengarang">
-                        </div>
-                        <div class="form-group">
-                            <label for="penerbit">Penerbit</label>
-                            <input type="text" id="penerbit" class="form-control" required placeholder="Nama penerbit">
-                        </div>
-                        <div class="form-group">
-                            <label for="tahun_terbit">Tahun Terbit</label>
-                            <input type="number" id="tahun_terbit" class="form-control" required placeholder="2024" min="1900" max="2100">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_kategori">Kategori</label>
-                            <select id="id_kategori" class="form-control" required>
-                                <option value="">Pilih Kategori</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="bahasa">Bahasa</label>
-                            <input type="text" id="bahasa" class="form-control" required placeholder="Indonesia/Inggris dll">
-                        </div>
-                        <div class="form-group">
-                            <label for="jumlah_halaman">Jumlah Halaman</label>
-                            <input type="number" id="jumlah_halaman" class="form-control" required placeholder="100" min="1">
-                        </div>
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label for="sinopsis">Sinopsis</label>
-                            <textarea id="sinopsis" class="form-control" rows="4" placeholder="Deskripsi buku"></textarea>
-                        </div>
-                        <div class="form-group" style="grid-column: 1 / -1; display: flex; gap: 12px;">
-                            <button type="submit" class="btn-primary">Simpan</button>
-                            <button type="button" class="btn-secondary" onclick="resetForm()">Batal</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Table Section -->
-                <div class="card-section">
-                    <div class="card-header">Daftar Buku</div>
-                    <div class="table-controls">
-                        <input type="text" id="search-input" class="form-control" placeholder="Cari buku..." onkeyup="searchBuku()">
-                        <select id="filter-kategori" class="form-control" onchange="filterBuku()">
-                            <option value="">Semua Kategori</option>
+                    <div class="form-group">
+                        <label for="judul">Judul Buku</label>
+                        <input type="text" id="judul" required placeholder="Judul buku">
+                    </div>
+                    <div class="form-group">
+                        <label for="pengarang">Pengarang</label>
+                        <input type="text" id="pengarang" required placeholder="Nama pengarang">
+                    </div>
+                    <div class="form-group">
+                        <label for="penerbit">Penerbit</label>
+                        <input type="text" id="penerbit" required placeholder="Nama penerbit">
+                    </div>
+                    <div class="form-group">
+                        <label for="tahun_terbit">Tahun Terbit</label>
+                        <input type="number" id="tahun_terbit" required placeholder="2024" min="1900" max="2100">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_kategori">Kategori</label>
+                        <select id="id_kategori" required>
+                            <option value="">Pilih Kategori</option>
                         </select>
                     </div>
-                    <div class="table-container">
-                        <table id="buku-table">
-                            <thead>
-                                <tr>
-                                    <th>ISBN</th>
-                                    <th>Judul</th>
-                                    <th>Pengarang</th>
-                                    <th>Penerbit</th>
-                                    <th>Tahun</th>
-                                    <th>Kategori</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="buku-tbody">
-                                <tr>
-                                    <td colspan="7" style="text-align:center; padding: 40px;">Memuat data...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group">
+                        <label for="bahasa">Bahasa</label>
+                        <input type="text" id="bahasa" required placeholder="Indonesia/Inggris dll">
                     </div>
+                    <div class="form-group">
+                        <label for="jumlah_halaman">Jumlah Halaman</label>
+                        <input type="number" id="jumlah_halaman" required placeholder="100" min="1">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="sinopsis">Sinopsis</label>
+                        <textarea id="sinopsis" rows="4" placeholder="Deskripsi buku"></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Data Buku -->
+            <div class="card">
+                <div class="card-header">Daftar Buku</div>
+                <div class="table-controls">
+                    <input type="text" id="search-input" placeholder="Cari buku..." onkeyup="searchBuku()">
+                    <select id="filter-kategori" onchange="filterBuku()">
+                        <option value="">Semua Kategori</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table id="buku-table">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Judul</th>
+                                <th>Pengarang</th>
+                                <th>Penerbit</th>
+                                <th>Tahun</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buku-tbody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/admin/katalog.js') }}"></script>
+    <script src="/static/js/global.js"></script>
+    <script src="/static/js/admin/katalog.js"></script>
 </body>
 </html>
