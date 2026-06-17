@@ -1,5 +1,5 @@
 /* ========================================
-   MODERN LOGIN STYLES - RED THEME
+   MODERN LOGIN STYLES - RED THEME (Full Screen Desktop)
    ======================================== */
 
 * {
@@ -11,7 +11,7 @@
 :root {
     --primary-red: #E53935;
     --primary-red-dark: #C62828;
-    --primary-red-light: #FF8A80;
+    --primary-red-light: #FFCDD2;
     --text-primary: #1A1A1A;
     --text-secondary: #666666;
     --text-muted: #999999;
@@ -19,47 +19,47 @@
     --bg-white: #FFFFFF;
     --border-color: #E0E0E0;
     --error-color: #D32F2F;
-    --success-color: #388E3C;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.2s ease;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #FFF5F5 0%, #FFE5E5 100%);
+    background-color: var(--bg-white); /* Background polos karena container sudah full */
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
     color: var(--text-primary);
+    font-size: 13px;
+    overflow: hidden; /* Mencegah scroll jika tidak perlu */
 }
 
+/* Container Full Screen */
 .login-container {
-    width: 100%;
-    max-width: 1100px;
+    width: 100vw;  /* Lebar 100% viewport */
+    height: 100vh; /* Tinggi 100% viewport */
     background: var(--bg-white);
-    border-radius: 24px;
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 650px;
+    grid-template-columns: 40% 60%; /* Kiri 40%, Kanan 60% */
+    overflow: hidden;
 }
 
-/* Panel Branding (Kiri) */
+/* =========================================
+   Panel Branding (Kiri - Full Height)
+   ========================================= */
 .login-branding {
     background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
-    padding: 60px 50px;
+    padding: 60px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    color: white;
 }
 
+/* Efek Background Animasi */
 .login-branding::before {
     content: '';
     position: absolute;
@@ -67,40 +67,40 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
     animation: pulse 15s ease-in-out infinite;
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.1) rotate(5deg); }
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 .branding-content {
     position: relative;
     z-index: 1;
     text-align: center;
-    color: white;
+    max-width: 400px;
 }
 
 .logo-placeholder {
-    width: 100px;
-    height: 100px;
-    background: rgba(255, 255, 255, 0.15);
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    border-radius: 24px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 30px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    margin: 0 auto 24px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .book-icon {
-    width: 50px;
-    height: 50px;
-    border: 4px solid white;
-    border-radius: 8px 12px 12px 8px;
+    width: 40px;
+    height: 40px;
+    border: 3px solid white;
+    border-radius: 5px 8px 8px 5px;
     position: relative;
 }
 
@@ -118,16 +118,17 @@ body {
 .book-icon::after {
     content: '';
     position: absolute;
-    right: 8px;
-    top: 10px;
-    width: 15px;
+    right: 6px;
+    top: 8px;
+    width: 12px;
     height: 2px;
     background: white;
+    box-shadow: 0 4px 0 white, 0 8px 0 white;
 }
 
 .branding-content h1 {
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
@@ -136,39 +137,45 @@ body {
     font-size: 16px;
     opacity: 0.9;
     line-height: 1.6;
-    font-weight: 300;
 }
 
 .decoration-line {
     width: 60px;
-    height: 3px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.3);
-    margin: 30px auto;
+    margin: 24px auto;
     border-radius: 2px;
 }
 
 .copyright {
-    font-size: 13px !important;
-    opacity: 0.7 !important;
-    margin-top: 40px;
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    font-size: 12px;
+    opacity: 0.7;
+    text-align: center;
 }
 
-/* Panel Form (Kanan) */
+/* =========================================
+   Panel Form (Kanan - Centered)
+   ========================================= */
 .login-form-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 60px 50px;
+    padding: 40px;
     background: var(--bg-white);
+    position: relative;
 }
 
 .login-box {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px; /* Lebar form tetap nyaman dibaca */
 }
 
 .form-header {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
 }
 
 .form-header h2 {
@@ -176,32 +183,32 @@ body {
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
-    letter-spacing: -0.5px;
 }
 
 .form-header p {
     color: var(--text-secondary);
-    font-size: 15px;
+    font-size: 14px;
 }
 
 /* Form Elements */
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .input-group label {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-primary);
-    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .input-field {
@@ -210,13 +217,12 @@ body {
 
 .input-field input {
     width: 100%;
-    padding: 14px 16px;
-    font-size: 15px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     background: var(--bg-light);
     transition: var(--transition);
-    font-family: inherit;
     color: var(--text-primary);
 }
 
@@ -224,27 +230,36 @@ body {
     outline: none;
     border-color: var(--primary-red);
     background: var(--bg-white);
-    box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.1);
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
 }
 
-.input-field input::placeholder {
-    color: var(--text-muted);
+/* Password Toggle Icon */
+.password-wrapper input {
+    padding-right: 40px;
 }
 
-.input-border {
+.toggle-password {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-red);
-    transition: var(--transition);
-    transform: translateX(-50%);
-    border-radius: 2px;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
-.input-field input:focus + .input-border {
-    width: 100%;
+.toggle-password:hover {
+    color: var(--primary-red);
+}
+
+.toggle-password svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Checkbox & Forgot Password */
@@ -252,7 +267,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
+    font-size: 13px;
+    margin-top: -4px;
 }
 
 .checkbox-container {
@@ -261,12 +277,11 @@ body {
     gap: 8px;
     cursor: pointer;
     color: var(--text-secondary);
-    user-select: none;
 }
 
 .checkbox-container input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     accent-color: var(--primary-red);
     cursor: pointer;
 }
@@ -274,50 +289,30 @@ body {
 .forgot-password {
     color: var(--primary-red);
     text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
+    font-weight: 600;
 }
 
 .forgot-password:hover {
-    color: var(--primary-red-dark);
     text-decoration: underline;
 }
 
 /* Login Button */
 .btn-login {
     width: 100%;
-    padding: 16px;
+    padding: 12px;
     background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    font-family: inherit;
-    letter-spacing: 0.3px;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-login::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: 0.5s;
-}
-
-.btn-login:hover::before {
-    left: 100%;
+    gap: 8px;
+    margin-top: 8px;
 }
 
 .btn-login:hover {
@@ -325,116 +320,36 @@ body {
     box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
 }
 
-.btn-login:active {
-    transform: translateY(0);
-}
-
 .btn-arrow {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     border-right: 2px solid white;
     border-top: 2px solid white;
     transform: rotate(45deg);
-    transition: var(--transition);
-}
-
-.btn-login:hover .btn-arrow {
-    transform: rotate(45deg) translate(3px, -3px);
 }
 
 /* Error Message */
 .error-message {
-    padding: 14px 16px;
+    padding: 10px 14px;
     background: #FFEBEE;
     border-left: 4px solid var(--error-color);
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--error-color);
-    font-size: 14px;
-    font-weight: 500;
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
 }
 
 /* Footer */
 .form-footer {
-    margin-top: 30px;
+    margin-top: 32px;
     text-align: center;
-    padding-top: 24px;
+    padding-top: 20px;
     border-top: 1px solid var(--border-color);
 }
 
 .form-footer p {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
-}
-
-/* Responsive Design */
-@media (max-width: 900px) {
-    .login-container {
-        grid-template-columns: 1fr;
-        max-width: 500px;
-        min-height: auto;
-    }
-
-    .login-branding {
-        padding: 40px 30px;
-        min-height: 200px;
-    }
-
-    .logo-placeholder {
-        width: 70px;
-        height: 70px;
-        margin: 0 auto 20px;
-    }
-
-    .book-icon {
-        width: 35px;
-        height: 35px;
-        border-width: 3px;
-    }
-
-    .branding-content h1 {
-        font-size: 24px;
-    }
-
-    .branding-content p {
-        font-size: 14px;
-    }
-
-    .login-form-wrapper {
-        padding: 40px 30px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        padding: 10px;
-    }
-
-    .login-branding {
-        padding: 30px 20px;
-    }
-
-    .login-form-wrapper {
-        padding: 30px 20px;
-    }
-
-    .form-header h2 {
-        font-size: 24px;
-    }
-
-    .btn-login {
-        padding: 14px;
-        font-size: 15px;
-    }
 }
